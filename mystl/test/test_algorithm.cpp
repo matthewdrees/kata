@@ -661,6 +661,53 @@ int test_search_n()
     return num_fails;
 }
 
+int test_copy()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        std::ptrdiff_t first_index;
+        std::ptrdiff_t last_index;
+        std::vector<int> expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, 0, 0, {}},
+        {{1}, 0, 1, {1}},
+        {{1, 2}, 0, 2, {1, 2}},
+        {{1, 2}, 0, 1, {1, 0}},
+        {{1, 2}, 1, 2, {2, 0}},
+        {{1, 2, 3}, 0, 1, {1, 0, 0}},
+        {{1, 2, 3}, 0, 2, {1, 2, 0}},
+        {{1, 2, 3}, 0, 3, {1, 2, 3}},
+        {{1, 2, 3}, 1, 1, {0, 0, 0}},
+        {{1, 2, 3}, 1, 2, {2, 0, 0}},
+        {{1, 2, 3}, 1, 3, {2, 3, 0}},
+        {{1, 2, 3}, 2, 2, {0, 0, 0}},
+        {{1, 2, 3}, 2, 3, {3, 0, 0}},
+        {{1, 2, 3}, 3, 3, {0, 0, 0}},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        std::vector<int> actual(tc.expected.size(), 0);
+        auto it = ::copy(tc.v.begin() + tc.first_index, tc.v.begin() + tc.last_index, actual.begin());
+        const auto actual_it_distance = std::distance(actual.begin(), it);
+        const ptrdiff_t expected_it_distance = tc.last_index - tc.first_index;
+        if (tc.expected != actual || expected_it_distance != actual_it_distance)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v)
+                      << ", first_index: " << tc.first_index << ", last_index: " << tc.last_index << ")"
+                      << ", expected: " << vec_to_string(tc.expected)
+                      << ", actual: " << vec_to_string(actual)
+                      << ", expected it distance: " << expected_it_distance
+                      << ", actual it distance: " << actual_it_distance
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -678,6 +725,7 @@ int main()
                           test_find_first_of() +
                           test_adjacent_find() +
                           test_search() +
-                          test_search_n();
+                          test_search_n() +
+                          test_copy();
     return num_fails == 0 ? 0 : 1;
 }
