@@ -660,6 +660,7 @@ int test_search_n()
     }
     return num_fails;
 }
+
 int test_copy()
 {
     struct TestCase
@@ -742,6 +743,38 @@ int test_copy_if()
     return num_fails;
 }
 
+int test_copy_backward()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        std::vector<int> expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, {}},
+        {{1}, {1}},
+        {{1, 2}, {1, 2}},
+        {{1, 2, 3}, {1, 2, 3}},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        std::vector<int> actual(tc.v.size(), 0);
+        const auto it = ::copy_backward(tc.v.begin(), tc.v.end(), actual.end());
+        const auto ret_it_dist = std::distance(actual.begin(), it);
+        if (tc.expected != actual || ret_it_dist != 0)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ")"
+                      << ", expected: " << vec_to_string(tc.expected)
+                      << ", actual: " << vec_to_string(actual)
+                      << ", return it distace: " << ret_it_dist
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -761,6 +794,7 @@ int main()
                           test_search() +
                           test_search_n() +
                           test_copy() +
-                          test_copy_if();
+                          test_copy_if() +
+                          test_copy_backward();
     return num_fails == 0 ? 0 : 1;
 }
