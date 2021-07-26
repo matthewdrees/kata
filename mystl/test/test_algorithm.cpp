@@ -660,7 +660,6 @@ int test_search_n()
     }
     return num_fails;
 }
-
 int test_copy()
 {
     struct TestCase
@@ -708,6 +707,41 @@ int test_copy()
     return num_fails;
 }
 
+int test_copy_if()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        std::vector<int> expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, {}},
+        {{1}, {}},
+        {{2}, {2}},
+        {{1, 2}, {2}},
+        {{2, 1}, {2}},
+        {{1, 2, 3}, {2}},
+        {{1, 2, 3, 4}, {2, 4}},
+        {{2, 3, 4, 5}, {2, 4}},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        std::vector<int> actual;
+        (void)::copy_if(tc.v.begin(), tc.v.end(), std::back_inserter(actual), [=](const int i)
+                        { return i % 2 == 0; });
+        if (tc.expected != actual)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ")"
+                      << ", expected: " << vec_to_string(tc.expected)
+                      << ", actual: " << vec_to_string(actual)
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -726,6 +760,7 @@ int main()
                           test_adjacent_find() +
                           test_search() +
                           test_search_n() +
-                          test_copy();
+                          test_copy() +
+                          test_copy_if();
     return num_fails == 0 ? 0 : 1;
 }
