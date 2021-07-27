@@ -303,3 +303,13 @@ constexpr BidirIt2 copy_backward(BidirIt1 first, BidirIt1 last, BidirIt2 d_last)
     }
     return d_last;
 }
+
+template <class InputIt, class OutputIt>
+constexpr OutputIt move(InputIt first, InputIt last, OutputIt d_first)
+{
+    while (first != last)
+    {
+        *d_first++ = std::move(*first++);
+    }
+    return d_first;
+}

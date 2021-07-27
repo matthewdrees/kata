@@ -5,11 +5,11 @@
 #include <vector>
 
 template <class T>
-std::string vec_to_string(const std::vector<T> v)
+std::string vec_to_string(const std::vector<T> &v)
 {
     std::ostringstream oss;
     oss << '{';
-    for (const auto i : v)
+    for (const auto &i : v)
     {
         oss << i << ',';
     }
@@ -775,6 +775,72 @@ int test_copy_backward()
     return num_fails;
 }
 
+namespace // unnamed
+{
+    // CantCopy class for testing stuff that can only move.
+    class CantCopy
+    {
+        int i;
+
+    public:
+        CantCopy() : i(0) {}
+        CantCopy(int i_) : i(i_) {}
+        CantCopy(const CantCopy &) = delete;
+        CantCopy &operator=(const CantCopy &) = delete;
+        CantCopy(CantCopy &&o) noexcept = default;
+        CantCopy &operator=(CantCopy &&o) noexcept = default;
+        int getI() const noexcept { return i; }
+    };
+    bool operator==(const CantCopy &lhs, const CantCopy &rhs)
+    {
+        return lhs.getI() == rhs.getI();
+    }
+    std::ostream &operator<<(std::ostream &os, const CantCopy &cc)
+    {
+        os << cc.getI();
+        return os;
+    }
+} // Unnamed namespace
+
+int test_move()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        std::vector<int> expected;
+    };
+
+    const TestCase test_cases[] = {
+        {{}, {}},
+        {{1}, {1}},
+        {{1, 2}, {1, 2}},
+        {{1, 2, 3}, {1, 2, 3}},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        std::vector<CantCopy> v2(tc.v.size());
+        // Move constructor
+        (void)::move(tc.v.begin(), tc.v.end(), v2.begin());
+        // Move assignment
+        std::vector<CantCopy> actual(tc.v.size());
+        const auto it = ::move(v2.begin(), v2.end(), actual.begin());
+        const ptrdiff_t it_distance = std::distance(it, actual.end());
+        if (!std::equal(tc.expected.begin(), tc.expected.end(), actual.begin(), actual.end(), [](const auto &i1, const auto &i2)
+                        { return i1 == i2; }) ||
+            it_distance != 0)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.expected) << ")"
+                      << ", expected: " << vec_to_string(tc.expected)
+                      << ", actual: " << vec_to_string(actual)
+                      << ", it distance != 0: " << it_distance
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -795,6 +861,8 @@ int main()
                           test_search_n() +
                           test_copy() +
                           test_copy_if() +
-                          test_copy_backward();
+                          test_copy_backward() +
+                          test_move();
+
     return num_fails == 0 ? 0 : 1;
 }
