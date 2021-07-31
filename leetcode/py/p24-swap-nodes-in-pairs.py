@@ -13,13 +13,16 @@ class Solution:
         if head and head.next:
             a = head
             b = head.next
-            a.next, b.next = b.next, a
+            a.next = b.next
+            b.next = a
             head = b
             prev = a
             while prev.next and prev.next.next:
                 a = prev.next
                 b = a.next
-                prev.next, a.next, b.next = b, b.next, a
+                a.next = b.next
+                b.next = a
+                prev.next = b
                 prev = a
         return head
 
