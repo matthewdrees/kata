@@ -841,6 +841,43 @@ int test_move()
     return num_fails;
 }
 
+int test_move_backward()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        std::vector<int> expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, {}},
+        {{1}, {1}},
+        {{1, 2}, {1, 2}},
+        {{1, 2, 3}, {1, 2, 3}},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        std::vector<CantCopy> v2(tc.v.size());
+        // Move constructor
+        (void)::move_backward(tc.v.begin(), tc.v.end(), v2.end());
+        // Move assignment
+        std::vector<CantCopy> actual(tc.v.size());
+        const auto it = ::move_backward(v2.begin(), v2.end(), actual.end());
+        const ptrdiff_t it_distance = std::distance(actual.begin(), it);
+        if (!std::equal(tc.expected.begin(), tc.expected.end(), actual.begin(), actual.end(), [](const auto &i1, const auto &i2)
+                        { return i1 == i2; }) ||
+            it_distance != 0)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.expected) << ")"
+                      << ", expected: " << vec_to_string(tc.expected)
+                      << ", actual: " << vec_to_string(actual)
+                      << ", it distance != 0: " << it_distance
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
 int main()
 {
     const int num_fails = test_all_of() +
@@ -862,7 +899,8 @@ int main()
                           test_copy() +
                           test_copy_if() +
                           test_copy_backward() +
-                          test_move();
+                          test_move() +
+                          test_move_backward();
 
     return num_fails == 0 ? 0 : 1;
 }
