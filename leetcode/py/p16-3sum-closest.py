@@ -8,7 +8,7 @@ class Solution:
     def threeSumClosest(self, nums: List[int], target: int) -> int:
         """Find three integers in nums such that the sum is closest to target.
 
-        Faster than 95.15% of leetcode submissions."""
+        Faster than 96% of leetcode submissions."""
         assert len(nums) >= 3
         nums.sort()
         smallest_3_sum = sum(nums[:3])
@@ -32,9 +32,9 @@ class Solution:
                             return target
                     nearest -= nums[a]
                     a += 1
-                    nearest += nums[a]
                     if a == b:
                         break
+                    nearest += nums[a]
                 elif nearest > target:
                     delta = nearest - target
                     if delta < smallest_positive_delta:
@@ -43,9 +43,9 @@ class Solution:
                             return target
                     nearest -= nums[c]
                     c -= 1
-                    nearest += nums[c]
                     if b == c:
                         break
+                    nearest += nums[c]
                 else:
                     return target
         if smallest_negative_delta <= smallest_positive_delta:
