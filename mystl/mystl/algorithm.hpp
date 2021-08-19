@@ -323,3 +323,12 @@ constexpr BidirIt2 move_backward(BidirIt1 first, BidirIt1 last, BidirIt2 d_last)
     }
     return d_last;
 }
+
+template <class ForwardIt, class T>
+constexpr void fill(ForwardIt first, ForwardIt last, const T &value)
+{
+    while (first != last)
+    {
+        *first++ = value;
+    }
+}
