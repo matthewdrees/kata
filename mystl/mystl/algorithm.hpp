@@ -332,3 +332,13 @@ constexpr void fill(ForwardIt first, ForwardIt last, const T &value)
         *first++ = value;
     }
 }
+
+template <class OutputIt, class Size, class T>
+constexpr OutputIt fill_n(OutputIt first, Size count, const T &value)
+{
+    while (count-- > 0)
+    {
+        *first++ = value;
+    }
+    return first;
+}

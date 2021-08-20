@@ -896,6 +896,23 @@ int test_fill()
     return num_fails;
 }
 
+int test_fill_n()
+{
+    std::vector<int> v = {0, 0, 0};
+    ::fill_n(v.begin(), 2, 1);
+    const std::vector<int> expected = {1, 1, 0};
+    int num_fails = 0;
+    if (expected != v)
+    {
+        ++num_fails;
+        std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(v) << ")"
+                  << ", expected: " << vec_to_string(expected)
+                  << ", actual: " << vec_to_string(v)
+                  << "\n";
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -919,7 +936,8 @@ int main()
                           test_copy_backward() +
                           test_move() +
                           test_move_backward() +
-                          test_fill();
+                          test_fill() +
+                          test_fill_n();
 
     return num_fails == 0 ? 0 : 1;
 }
