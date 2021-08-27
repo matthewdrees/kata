@@ -4,25 +4,28 @@ from typing import List
 
 class Solution:
     def divide(self, dividend: int, divisor: int) -> int:
-        n = abs(dividend)
-        step = abs(divisor)
-        count = 1
-        stepcount_stack = []
-        while step <= n:
-            stepcount_stack.append((step, count))
-            step = step << 1
-            count = count << 1
+        numerator = abs(dividend)
+        denominator = abs(divisor)
+        base2 = 0
+        while base2 < 32:
+            step = denominator << base2
+            if step > numerator:
+                break
+            base2 += 1
         ans = 0
-        for sc in reversed(stepcount_stack):
-            if n >= sc[0]:
-                n -= sc[0]
-                ans += sc[1]
+        while base2 > 0:
+            base2 -= 1
+            step = denominator << base2
+            if numerator >= step:
+                numerator -= step
+                ans += 1 << base2
+                if numerator == 0:
+                    break
         if (dividend < 0) == (divisor < 0):  # answer is positive
             int32_max = 2147483647
-            ans = min(ans, int32_max)
-        else:  # answer is negative
-            ans = -ans
-        return ans
+            return min(ans, int32_max)
+        # else answer is negative
+        return -ans
 
 
 if __name__ == "__main__":
