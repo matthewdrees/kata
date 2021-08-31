@@ -11,6 +11,7 @@ static uint8_t get_row_nums_index(uint8_t pos) { return pos / 9; }
 static uint8_t get_col_nums_index(uint8_t pos) { return pos % 9; }
 static uint8_t get_square_nums_index(uint8_t pos)
 {
+    assert(pos < 81);
     constexpr uint8_t square_indexes[] = { 0, 0, 0, 1, 1, 1, 2, 2, 2,
         0, 0, 0, 1, 1, 1, 2, 2, 2,
         0, 0, 0, 1, 1, 1, 2, 2, 2,
@@ -20,7 +21,6 @@ static uint8_t get_square_nums_index(uint8_t pos)
         6, 6, 6, 7, 7, 7, 8, 8, 8,
         6, 6, 6, 7, 7, 7, 8, 8, 8,
         6, 6, 6, 7, 7, 7, 8, 8, 8 };
-    assert(pos < 81);
     return square_indexes[pos];
 }
 
@@ -63,7 +63,6 @@ BoardNums build_board_nums(const Board& board)
 }
 
 struct EmptyCell {
-    uint8_t pos = 0; // Cell position from original board.
 
     // Pre-calculated indexes for row/col/square.
     uint8_t row_nums_index = 0;
@@ -82,32 +81,30 @@ struct EmptyCell {
     }
 
     EmptyCell() = default;
+    explicit EmptyCell(int8_t pos)
+        : row_nums_index(get_row_nums_index(pos))
+        , col_nums_index(get_col_nums_index(pos))
+        , square_nums_index(get_square_nums_index(pos))
+        , num(0)
+        , possible_nums(0)
+    {
+    }
+
     EmptyCell(EmptyCell&) = default;
     EmptyCell(EmptyCell&&) = default;
     EmptyCell& operator=(EmptyCell& o) = default;
     EmptyCell& operator=(EmptyCell&& o) = default;
 };
 
-EmptyCell build_empty_cell(uint8_t pos)
-{
-    EmptyCell empty_cell;
-    empty_cell.pos = pos;
-    empty_cell.row_nums_index = get_row_nums_index(pos);
-    empty_cell.col_nums_index = get_col_nums_index(pos);
-    empty_cell.square_nums_index = get_square_nums_index(pos);
-    empty_cell.num = 1;
-    empty_cell.possible_nums = 0;
-    return empty_cell;
-}
-
 std::vector<EmptyCell> build_empty_cells(const Board& board)
 {
     std::vector<EmptyCell> empty_cells;
+    empty_cells.reserve(81);
     uint8_t pos = 0;
     for (const auto& row : board) {
         for (const auto c : row) {
             if (c == '.') {
-                empty_cells.push_back(build_empty_cell(pos));
+                empty_cells.push_back(EmptyCell(pos));
             }
             ++pos;
         }
@@ -128,21 +125,24 @@ char num_to_c(uint16_t num)
 void solve_empty_cells(BoardNums board_nums, std::vector<EmptyCell>& empty_cells)
 {
     auto empty_cell = empty_cells.begin();
-    while (true) {
-        if (empty_cell == empty_cells.end()) {
-            break;
-        }
-        if (empty_cell->num == 1) {
+    while (empty_cell != empty_cells.end()) {
+        if (empty_cell->possible_nums == 0) {
             empty_cell->set_possible_nums(board_nums);
             if (empty_cell->possible_nums == 0) {
-                empty_cell->num = (1 << 10);
+                if (empty_cell == empty_cells.begin()) {
+                    break;
+                }
+                --empty_cell;
+                continue;
             }
+            empty_cell->num = 1 << 1;
         } else {
             board_nums.row_nums[empty_cell->row_nums_index] |= empty_cell->num;
             board_nums.col_nums[empty_cell->col_nums_index] |= empty_cell->num;
             board_nums.square_nums[empty_cell->square_nums_index] |= empty_cell->num;
+            empty_cell->num <<= 1;
         }
-        for (empty_cell->num <<= 1; empty_cell->num < (1 << 10); empty_cell->num <<= 1) {
+        for (; empty_cell->num < (1 << 10); empty_cell->num <<= 1) {
             if (empty_cell->num & empty_cell->possible_nums) {
                 break;
             }
@@ -154,7 +154,7 @@ void solve_empty_cells(BoardNums board_nums, std::vector<EmptyCell>& empty_cells
             ++empty_cell;
             continue;
         }
-        empty_cell->num = 1;
+        empty_cell->possible_nums = 0;
         if (empty_cell == empty_cells.begin()) {
             break;
         }
@@ -165,9 +165,7 @@ void solve_empty_cells(BoardNums board_nums, std::vector<EmptyCell>& empty_cells
 void fill_empty_board_cells(const std::vector<EmptyCell>& empty_cells, Board& board)
 {
     for (const auto& empty_cell : empty_cells) {
-        size_t x = empty_cell.pos % 9;
-        size_t y = empty_cell.pos / 9;
-        board[y][x] = num_to_c(empty_cell.num);
+        board[empty_cell.row_nums_index][empty_cell.col_nums_index] = num_to_c(empty_cell.num);
     }
 }
 
