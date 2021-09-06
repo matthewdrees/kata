@@ -5,8 +5,6 @@ from typing import List
 
 class Solution:
     def merge(self, intervals: List[List[int]]) -> List[List[int]]:
-        if len(intervals) == 0:
-            return intervals
         intervals.sort(key=lambda x: x[0])
         nlen = len(intervals)
         i = 0
