@@ -1,64 +1,61 @@
+from re import S
+import pyperf
+import random
+import string
+
+
 class Solution:
     def longestPalindrome(self, s: str) -> str:
-        if len(s) == 0:
-            return ''
-        longestPos = 0
-        longestLen = 1
-        # odd palendrome
-        for x in range(1, len(s) - 1):
-            maxY = min(x, len(s) - x - 1) + 1
-            for y in range(1, maxY):
-                if s[x - y] != s[x + y]:
-                    break
-                if 2 * y + 1 > longestLen:
-                    longestPos = x - y
-                    longestLen = x + y + 1 - longestPos
-        # even palendrome
-        for x in range(len(s) - 1):
-            maxY = min(x, len(s) - x - 2) + 1
-            for y in range(0, maxY):
-                if s[x - y] != s[x + 1 + y]:
-                    break
-                if 2 * (y + 1) > longestLen:
-                    longestPos = x - y
-                    longestLen = x + y + 2 - longestPos
-        return s[longestPos:longestPos + longestLen]
-
-
-class Solution2:
-    def longestPalindrome(self, s: str) -> str:
-        '''First submission.'''
-        if len(s) == 0:
-            return ''
-        lp = s[0]
-        # odd palendrome
-        for x in range(1, len(s) - 1):
-            maxY = min(x, len(s) - x - 1) + 1
-            for y in range(1, maxY):
-                if s[x - y] == s[x + y]:
-                    if 2 * y + 1 > len(lp):
-                        lp = s[x - y:x + y + 1]
+        len_s = len(s)
+        if len_s <= 1:
+            return s
+        i_longest = 0
+        longest_length = 1
+        i_end = len_s - 1
+        i = 0
+        while i < i_end:
+            # Odd-length palendrome
+            x = 1
+            while True:
+                if i - x >= 0 and i + x < len_s and s[i - x] == s[i + x]:
+                    length = x * 2 + 1
+                    if length > longest_length:
+                        longest_length = length
+                        i_longest = i
+                        i_end = len_s - x
+                    x += 1
                 else:
                     break
-        # even palendrome
-        for x in range(len(s) - 1):
-            maxY = min(x, len(s) - x - 2) + 1
-            for y in range(0, maxY):
-                if s[x - y] == s[x + 1 + y]:
-                    if 2 * (y + 1) > len(lp):
-                        lp = s[x - y:x + y + 2]
+            # Even-length palendrome
+            x = 1
+            while True:
+                if i - x + 1 >= 0 and i + x < len_s and s[i - x + 1] == s[i + x]:
+                    length = x * 2
+                    if length > longest_length:
+                        longest_length = length
+                        i_longest = i
+                        i_end = len_s - x
+                    x += 1
                 else:
                     break
-        return lp
+            i += 1
+
+        x = longest_length // 2
+        start = i_longest - x
+        if longest_length % 2 == 0:
+            start += 1
+        return s[start : i_longest + x + 1]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     s = Solution()
     tests = (
+        ("", ""),
         ("babad", "bab"),
         ("adbab", "bab"),
         ("cbbd", "bb"),
+        ("ccbd", "cc"),
         ("amanaplanacanalpanama", "amanaplanacanalpanama"),
         ("bbbbba", "bbbbb"),
         ("wwkew", "ww"),
@@ -68,8 +65,18 @@ if __name__ == '__main__':
 
     for test in tests:
 
-        string = test[0]
+        str = test[0]
         exp = test[1]
-        ans = s.longestPalindrome(string)
+        ans = s.longestPalindrome(str)
         if exp != ans:
-            print(f'FAIL. s: {string}, exp: {exp}, ans: {ans}')
+            print(f"FAIL. str: {str}, exp: {exp}, ans: {ans}")
+
+    # random_letters = []
+    # for _ in range(1000):
+    #    random_letters.append(random.choice(string.ascii_letters))
+    # print("".join(random_letters))
+    perf_str = "JFiAZYNSblRaBXiKkLGgAtGLexvorTdhZEBERdmRipoDcaqpVGEmfDeBgWqjDgwaWRkNrthvvHUHUQLgncBkfuIhtjYdqNxvuyFRIoZbgXEKJemqeCEqkKAgnlwwaxqmVhAjhNlPkSGlnPfRDLXwNhooClTPSrxpxgmaAUngTkOsTlXcltXnHAnimxzDYPDYRvTsDvORoIJiRkHtQvteTgMUAkjWqHLNUPchofaXRqdCvWXHYzYfOSiwaFUheFQHEuxKSmXIyjCCESrRVVOmLLUuowserGrfHkFycsbhPpyCOYWgJxDCVyDOrjuEQAaoVQyvuOBhWwVEWqmPJoIEtIdaJAaLCQTKwVNlqNQApTUiiiBTkhsSKhUkzXeEMYWYnZBgdaplMxUmoZUoxVxPPWkMvbjakAZYipnucjSfLUyUMEgEkMuUFSInBnlYLDbJzYNhWEuzKKXpliCAZzwFMKGOOsvrXrqmVxOZOvctJrgkRrmBAbTiEnVbniGCoKumLKzfCfarCoLaqzyxRDqgPbPwVCaCpracfhNImVXHZjjxvjnqLrarouVCBGNRYWKgjqbKJmtykgNNJLQOdRrhNCENvEFPmtHhzuPZZFItacGIUtqxbxOJlYcWmbbiJCKNfRweZhnsphOuqPOUbrjINEhpZxeqjyfAeOiIFiPpdSYaSzGIzZQntYyOkiZFZKxnYqAraczNCFGPHbxohcfCXinlIqDbIlBGIpzKDpJpHevlInCGMKgjuYTDMrIDplQDdEdfzpgRWEgLRYKBdbUzaeAuZwEqsbtuzwVaKFMwfVewSxRXEQRlzdWYHzJhxXUtqcAisjBcJUvqkcTIxGrOYFDvQpjnmYvNurkqTUNFvQaanQxxVpZMVDlRzdDwmkHDomFfFvvFEZcKtKuHHWPszQbGHUsNXuizrrKndvpcYREWQLStsfhgLouZcCLEWLcdXxowIFAPptjFCbMPePeAZsVgkMLGHQOvnjHEbzVK"
+    runner = pyperf.Runner()
+    runner.bench_func("s.longestPalindrome(perf_str)", s.longestPalindrome, perf_str)
+    # for _ in range(100):
+    #    print(s.longestPalindrome(perf_str))
