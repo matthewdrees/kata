@@ -18,7 +18,8 @@ Processing units, state of activation, output function, pattern of connectivity,
 5. What were the two theoretical misunderstandings that held back the field of neural networks?
 A single layer of neurons is unable to learn simple functions, and to get good practical performance you need more layers of neurons.
 
-6. What is a GPU? Graphical Processing Unit.
+6. What is a GPU?
+Graphical Processing Unit.
 
 7. Open a notebook and execute a cell containing: 1+1. What happens?
 Outputs 2!
@@ -28,14 +29,38 @@ Outputs 2!
 9. Complete the Jupyter Notebook online appendix.
 
 10. Why is it hard to use a traditional computer program to recognize images in a photo?
-What did Samuel mean by "weight assignment"?
-What term do we normally use in deep learning for what Samuel called "weights"?
-Draw a picture that summarizes Samuel's view of a machine learning model.
-Why is it hard to understand why a deep learning model makes a particular prediction?
-What is the name of the theorem that shows that a neural network can solve any mathematical problem to any level of accuracy?
-What do you need in order to train a model?
-How could a feedback loop impact the rollout of a predictive policing model?
-Do we always have to use 224×224-pixel images with the cat recognition model?
-What is the difference between classification and regression?
-What is a validation set? What is a test set? Why do we need them?
-What will fastai do if you don't provide a validation set?
+Computers are "big morons". It's too hard to tell the computer what to do in painstaking enough detail.
+
+11. What did Samuel mean by "weight assignment"?
+Adjust parameters of the model.
+
+12. What term do we normally use in deep learning for what Samuel called "weights"?
+Parameters.
+
+13. Draw a picture that summarizes Samuel's view of a machine learning model.
+
+   inputs -> model -> results -> performance
+               ^                      |
+               |                      |
+            weights <-----------------+
+
+14. Why is it hard to understand why a deep learning model makes a particular prediction?
+
+15. What is the name of the theorem that shows that a neural network can solve any mathematical problem to any level of accuracy?
+Universal approximation theorem. (Very cool.)
+
+16. What do you need in order to train a model?
+Input data & labels.
+
+17. How could a feedback loop impact the rollout of a predictive policing model?
+The example given was a positive feedback loop that reinforces bad policing biases. (Arresting minority groups more often.)
+
+18. Do we always have to use 224×224-pixel images with the cat recognition model?
+The code example infers yes.
+
+19. What is the difference between classification and regression?
+
+20. What is a validation set? What is a test set? Why do we need them?
+Save off some data from the data set to validate the model.
+
+21. What will fastai do if you don't provide a validation set?
