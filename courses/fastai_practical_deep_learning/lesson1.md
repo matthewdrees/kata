@@ -1,4 +1,10 @@
-Lesson 1 Questionnaire.
+# Lesson 1 Notes
+* Regarding notebooks on google colab:
+  * Notebook settings do not use GPU hardware by default. Edit -> Notebook settings -> Hardware accelerator.
+  * The free account with GPU was a bit slower than my personal computer with no GPU for the first model telling cats from dogs. You get what you pay for.
+
+
+# Lesson 1 Questionnaire.
 
 1. Do you need these for deep learning?
    * Lots of math. False
@@ -41,7 +47,7 @@ Parameters.
 
    inputs -> model -> results -> performance
                ^                      |
-               |                      |
+               |          (update)    |
             weights <-----------------+
 
 14. Why is it hard to understand why a deep learning model makes a particular prediction?
@@ -80,21 +86,31 @@ The model becomes over-complicated to exactly fit the data. An example would be 
 that were shaped as a line in general, but your model drew a squiggly line to get the exact training data points.
 
 24. What is a metric? How does it differ from "loss"?
+"Loss" is the measure of performance. "A metric is a function that measures the quality of the model's predictions". There are different metrics for loss. E.g. the error rate of a classification model.
 
 25. How can pretrained models help?
+Pretrained models save you time. You start with a pretrained model that is known to be useful and refine the training with your data.
 
 26. What is the "head" of a model?
+The newly added part of the model that is specific to the new dataset.
 
 27. What kinds of features do the early layers of a CNN find? How about the later layers?
+Early layers find things like edges, shapes, simple patterns. Later layers look for higher-level concepts.
 
 28. Are image models only useful for photos?
+No. There are several interesting examples where image models are applied to other applications such as sound and malware detection.
 
 29. What is an "architecture"?
+Type of model.
 
 30. What is segmentation?
+A segmentation model can recognize the content of every pixel in an image.
 
 31. What is y_range used for? When do we need it?
+It tells the model that is predicting a number what the range of outputs should be.
 
 32. What are "hyperparameters"?
+Higher-level parameters.
 
 33. What's the best way to avoid failures when using AI in an organization?
+Set aside test data to verify the effectiveness.
