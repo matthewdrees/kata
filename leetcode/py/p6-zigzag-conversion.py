@@ -1,18 +1,21 @@
+# LeetCode 6. Zigzag conversion.
+import pyperf
+
+
 class Solution:
     def convert(self, s: str, numRows: int) -> str:
         if numRows >= len(s) or numRows < 2:
             return s
-        ret = ''
+        ret = ""
         biggestGap = (numRows - 1) * 2
 
         # Handle first row
         for x in range(0, len(s), biggestGap):
             ret += s[x]
 
-        # Middle rows alternate gaps.
+        # Middle rows alternate indexes
         nextGap = biggestGap - 2
-        for numRow in range(1, numRows - 1):
-            x = numRow
+        for x in range(1, numRows - 1):
             gap = nextGap
             while x < len(s):
                 ret += s[x]
@@ -27,9 +30,9 @@ class Solution:
         return ret
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
-    s = Solution()
+    solution = Solution()
     tests = (
         ("", 0, ""),
         ("", 1, ""),
@@ -58,11 +61,14 @@ if __name__ == '__main__':
     )
 
     for test in tests:
-        string = test[0]
+        s = test[0]
         numRows = test[1]
         exp = test[2]
-        ans = s.convert(string, numRows)
+        ans = solution.convert(s, numRows)
         if exp != ans:
-            print(
-                f'FAIL. s: {string}, numRows: {numRows}, exp: {exp}, ans: {ans}'
-            )
+            print(f"FAIL. s: {s}, numRows: {numRows}, exp: {exp}, ans: {ans}")
+
+    s = "a" * 1000
+    numRows = 3
+    runner = pyperf.Runner()
+    runner.bench_func("f", solution.convert, s, numRows)
