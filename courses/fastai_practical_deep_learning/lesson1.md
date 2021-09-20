@@ -2,6 +2,9 @@
 * Regarding notebooks on google colab:
   * Notebook settings do not use GPU hardware by default. Edit -> Notebook settings -> Hardware accelerator.
   * The free account with GPU was a bit slower than my personal computer with no GPU for the first model telling cats from dogs. You get what you pay for.
+  * ModuleNotFound fastbook error:
+    * 1st time: Need to copy the Jupyter Notebook to google drive (and approve access through link)
+    * 2nd time: Mount the drive. The second section in the notebook with "from google.colab import drive". Run that section (and approve access through link). 
 
 
 # Lesson 1 Questionnaire.
