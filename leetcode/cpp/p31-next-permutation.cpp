@@ -21,8 +21,26 @@ public:
             // Optimize that case.
             const size_t i1 = nums.size() - 2;
             const size_t i2 = nums.size() - 1;
-            if (nums[i1] < nums[i2]) {
+            if (nums[i1] < nums[i2] || nums.size() == 2) {
                 std::swap(nums[i1], nums[i2]);
+                return;
+            }
+
+            // Optimize last 3 elements.
+            const size_t i3 = nums.size() - 3;
+            if (nums[i3] < nums[i2]) {
+                const int tmp = nums[i1];
+                if (nums[i3] < nums[i1]) {
+                    // Rotate left
+                    nums[i1] = nums[i3];
+                    nums[i3] = nums[i2];
+                    nums[i2] = tmp;
+                } else {
+                    // Rotate right
+                    nums[i1] = nums[i2];
+                    nums[i2] = nums[i3];
+                    nums[i3] = tmp;
+                }
                 return;
             }
         }
@@ -83,9 +101,9 @@ static void BM_stl(benchmark::State& state)
 }
 BENCHMARK(BM_stl)->Range(0, MAX_SIZE);
 
-//BENCHMARK_MAIN();
+BENCHMARK_MAIN();
 
-int main()
+int main2()
 {
     struct TestCase {
         std::vector<int> nums;
