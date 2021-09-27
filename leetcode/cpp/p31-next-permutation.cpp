@@ -1,5 +1,8 @@
 // LeetCode 31. Next permutation.
+#include <benchmark/benchmark.h>
+
 #include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <utility>
@@ -13,9 +16,9 @@ public:
             return;
         }
 
-        // Half of all permutations are swapping the last 2 elements.
-        // Optimize that case.
         {
+            // Half of all permutations are swapping the last 2 elements.
+            // Optimize that case.
             const size_t i1 = nums.size() - 2;
             const size_t i2 = nums.size() - 1;
             if (nums[i1] < nums[i2]) {
@@ -51,6 +54,36 @@ static std::string toString(std::vector<int> nums)
     }
     return oss.str();
 }
+
+const size_t MAX_SIZE = 16;
+static void BM_mine(benchmark::State& state)
+{
+    std::vector<int> v;
+    v.reserve(state.range(0));
+    for (int i = 0; i < state.range(0); ++i) {
+        v.push_back(i);
+    }
+    Solution solution;
+    for (auto _ : state) {
+        solution.nextPermutation(v);
+    }
+}
+BENCHMARK(BM_mine)->Range(0, MAX_SIZE);
+
+static void BM_stl(benchmark::State& state)
+{
+    std::vector<int> v;
+    v.reserve(state.range(0));
+    for (int i = 0; i < state.range(0); ++i) {
+        v.push_back(i);
+    }
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(std::next_permutation(v.begin(), v.end()));
+    }
+}
+BENCHMARK(BM_stl)->Range(0, MAX_SIZE);
+
+//BENCHMARK_MAIN();
 
 int main()
 {
