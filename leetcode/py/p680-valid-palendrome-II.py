@@ -7,22 +7,22 @@ import string
 
 class Solution:
     def validPalindrome(self, s: str) -> bool:
-        def is_palendrome(i: int, j: int):
-            while i < j:
-                if s[i] != s[j]:
-                    return False
-                i += 1
-                j -= 1
+        if s == s[::-1]:
             return True
-
         i = 0
         j = len(s) - 1
         while i < j:
             if s[i] != s[j]:
-                return is_palendrome(i + 1, j) or is_palendrome(i, j - 1)
+                break
             i += 1
             j -= 1
-        return True
+        s1 = s[i:j]
+        if s1 == s1[::-1]:
+            return True
+        s2 = s[i + 1 : j + 1]
+        if s2 == s2[::-1]:
+            return True
+        return False
 
 
 if __name__ == "__main__":
