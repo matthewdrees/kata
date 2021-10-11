@@ -1,16 +1,16 @@
 # LeetCode 811. Subdomain visit count.
 from typing import List
+import collections
 
 
 class Solution:
     def subdomainVisits(self, cpdomains: List[str]) -> List[str]:
-        # Tried using collections.Counter() but it was slower.
-        d = {}
+        d = collections.Counter()
         for cpdomain in cpdomains:
             count, domain = cpdomain.split(" ")
             count = int(count)
             while True:
-                d[domain] = d.get(domain, 0) + count
+                d[domain] += count
                 idx = domain.find(".")
                 if idx < 0:
                     break
