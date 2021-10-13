@@ -1,20 +1,14 @@
 # LeetCode 49. Group Anagrams.
 from typing import List
+import collections
 
 
 class Solution:
     def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
-        d = {}
+        d = collections.defaultdict(list)
         for s in strs:
-            key = "".join(sorted(s))
-            if key in d:
-                d[key].append(s)
-            else:
-                d[key] = [s]
-        l = []
-        for key, item in d.items():
-            l.append(item)
-        return l
+            d["".join(sorted(s))].append(s)
+        return list(d.values())
 
 
 if __name__ == "__main__":
