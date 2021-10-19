@@ -39,6 +39,8 @@ Higher-level parameters.
 Set aside test data to verify the effectiveness.
 
 13. What is a p value?
+The probability of an observed result assuming that the null hypothesis is true. Ha! "They are almost always Terrible." It doesn't measure the importance of a result. It does not provide a good measure of evidence. Quotes Frank Harrell.
+
 14. What is a prior?
 15. Provide an example of where the bear classification model might work poorly in production, due to structural or style differences in the training data.
 16. Where do text models currently have a major deficiency?
