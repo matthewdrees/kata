@@ -915,6 +915,7 @@ int test_fill_n()
 
 int test_transform()
 {
+    // unary transform
     const std::vector<int> v = {1, 2, 3};
     std::vector<int> v2 = {0, 0, 0};
     ::transform(v.begin(), v.end(), v2.begin(), [](const auto i)
@@ -929,6 +930,21 @@ int test_transform()
                   << ", actual: " << vec_to_string(v2)
                   << "\n";
     }
+
+    // binary transform
+    const std::vector<int> expected2 = {3, 5, 7};
+    ::transform(v.begin(), v.end(), v2.begin(), v2.begin(), [](const auto i1, const auto i2)
+                { return i1 + i2; });
+    if (expected2 != v2)
+    {
+        ++num_fails;
+        std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(v) << ")"
+                  << ", expected: " << vec_to_string(expected2)
+                  << ", actual: " << vec_to_string(v2)
+                  << "\n";
+    }
+    return num_fails;
+}
     return num_fails;
 }
 
