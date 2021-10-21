@@ -945,6 +945,22 @@ int test_transform()
     }
     return num_fails;
 }
+
+int test_generate()
+{
+    std::vector<int> v = {0, 0, 0};
+    ::generate(v.begin(), v.end(), []()
+               { return 1; });
+    const std::vector<int> expected = {1, 1, 1};
+    int num_fails = 0;
+    if (expected != v)
+    {
+        ++num_fails;
+        std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(v) << ")"
+                  << ", expected: " << vec_to_string(expected)
+                  << ", actual: " << vec_to_string(v)
+                  << "\n";
+    }
     return num_fails;
 }
 
@@ -973,7 +989,9 @@ int main()
                           test_move_backward() +
                           test_fill() +
                           test_fill_n() +
-                          test_transform();
+                          test_transform() +
+                          test_generate();
+    test_transform();
 
     return num_fails == 0 ? 0 : 1;
 }

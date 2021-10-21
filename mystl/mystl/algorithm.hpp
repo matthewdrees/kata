@@ -352,6 +352,7 @@ constexpr OutputIt transform(InputIt first1, InputIt last1, OutputIt d_first, Un
     }
     return d_first;
 }
+
 template <class InputIt1, class InputIt2, class OutputIt, class BinaryOperation>
 constexpr OutputIt transform(InputIt1 first1, InputIt1 last1, InputIt2 first2, OutputIt d_first, BinaryOperation binary_op)
 {
@@ -362,3 +363,11 @@ constexpr OutputIt transform(InputIt1 first1, InputIt1 last1, InputIt2 first2, O
     return d_first;
 }
 
+template <class ForwardIt, class Generator>
+constexpr void generate(ForwardIt first, ForwardIt last, Generator g)
+{
+    while (first != last)
+    {
+        *first++ = g();
+    }
+}
