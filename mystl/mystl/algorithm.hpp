@@ -382,3 +382,10 @@ constexpr OutputIt generate_n(OutputIt first, Size count, Generator g)
     return first;
 }
 
+template <class T>
+constexpr void swap(T &a, T &b) noexcept
+{
+    T tmp = a;
+    a = b;
+    b = tmp;
+}

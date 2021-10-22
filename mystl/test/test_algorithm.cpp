@@ -982,6 +982,23 @@ int test_generate_n()
     return num_fails;
 }
 
+int test_swap()
+{
+    int a = 1;
+    int b = 2;
+    ::swap(a, b);
+    int num_fails = 0;
+    if (a != 2 || b != 1)
+    {
+        ++num_fails;
+        std::cerr << "FAIL, " << __FUNCTION__ << "(a: 1, b: 2)"
+                  << ", expected: 2, 1"
+                  << ", actual: " << a << ", " << b
+                  << "\n";
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -1012,6 +1029,7 @@ int main()
                           test_generate_n() +
                           test_generate();
     test_transform();
+                          test_swap();
 
     return num_fails == 0 ? 0 : 1;
 }
