@@ -964,6 +964,24 @@ int test_generate()
     return num_fails;
 }
 
+int test_generate_n()
+{
+    std::vector<int> v = {0, 0, 0};
+    ::generate_n(v.begin(), v.size(), []()
+                 { return 1; });
+    const std::vector<int> expected = {1, 1, 1};
+    int num_fails = 0;
+    if (expected != v)
+    {
+        ++num_fails;
+        std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(v) << ")"
+                  << ", expected: " << vec_to_string(expected)
+                  << ", actual: " << vec_to_string(v)
+                  << "\n";
+    }
+    return num_fails;
+}
+
 int main()
 {
     const int num_fails = test_all_of() +
@@ -990,6 +1008,8 @@ int main()
                           test_fill() +
                           test_fill_n() +
                           test_transform() +
+                          test_generate() +
+                          test_generate_n() +
                           test_generate();
     test_transform();
 

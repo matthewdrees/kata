@@ -371,3 +371,14 @@ constexpr void generate(ForwardIt first, ForwardIt last, Generator g)
         *first++ = g();
     }
 }
+
+template <class OutputIt, class Size, class Generator>
+constexpr OutputIt generate_n(OutputIt first, Size count, Generator g)
+{
+    for (; count > 0; --count)
+    {
+        *first++ = g();
+    }
+    return first;
+}
+
