@@ -1,22 +1,21 @@
 // LeetCode 22. Generate parentheses.
+#include "leetcode.hpp"
+
 #include <algorithm>
 #include <iostream>
-#include <sstream>
 #include <vector>
 
-bool has_valid_parens(std::string s)
+bool has_valid_parens(const std::string& s)
 {
     int i = 0;
     for (const char c : s) {
         if (c == '(') {
             ++i;
-        } else if (c == ')') {
+        } else {
             --i;
             if (i < 0) {
                 return false;
             }
-        } else {
-            return false;
         }
     }
     return true;
@@ -30,40 +29,44 @@ public:
         if (n <= 0) {
             return v;
         }
+        std::string s(static_cast<size_t>(n * 2), ')');
+        std::fill_n(s.begin(), static_cast<size_t>(n), '(');
         if (n == 1) {
-            v.push_back("()");
+            v.push_back(s);
             return v;
         }
-        std::ostringstream oss;
-        for (size_t i = 0; i++ < n;) {
-            oss << "(";
-        }
-        for (size_t i = 0; i++ < n;) {
-            oss << ")";
-        }
-        std::string s = oss.str();
-        size_t count = 0;
         do {
             if (has_valid_parens(s)) {
                 v.push_back(s);
             }
         } while (std::next_permutation(s.begin() + 1, s.end() - 1));
-        std::sort(v.begin(), v.end());
-        v.erase(std::unique(v.begin(), v.end()), v.end());
         return v;
     }
 };
 
-int main()
+int main(int argc, char* argv[])
 {
-    Solution solution;
-    for (int i = 1; i <= 8; ++i) {
-        const auto v = solution.generateParenthesis(i);
-        //for (const auto s : v) {
-        //    std::cout << s << "\n";
-        // }
-        std::cout << "size: " << v.size() << "\n";
-    }
+    struct TestCase {
+        int n;
+        std::vector<std::string> exp;
+    };
+    const TestCase testCases[] = {
+        { 0, {} },
+        { 1, { "()" } },
+        { 2, { "(())", "()()" } },
+        { 3, { "((()))", "(()())", "(())()", "()(())", "()()()" } },
+        { 4, { "(((())))", "((()()))", "((())())", "((()))()", "(()(()))", "(()()())", "(()())()", "(())(())", "(())()()", "()((()))", "()(()())", "()(())()", "()()(())", "()()()()" } },
+    };
 
+    Solution solution;
+    for (const auto& tc : testCases) {
+        const auto ans = solution.generateParenthesis(tc.n);
+        if (tc.exp != ans) {
+            std::cout << "FAIL. " << __FUNCTION__ << "(n: " << tc.n << ")"
+                      << ", exp: " << leetcode::to_string(tc.exp)
+                      << ", ans: " << leetcode::to_string(ans)
+                      << "\n";
+        }
+    }
     return 0;
 }
