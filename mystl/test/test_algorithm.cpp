@@ -39,8 +39,8 @@ int test_all_of()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        const auto actual = all_of(tc.v.begin(), tc.v.end(), [](int i)
-                                   { return i == 1; });
+        const auto actual = mystl::all_of(tc.v.begin(), tc.v.end(), [](int i)
+                                          { return i == 1; });
         if (tc.expected != actual)
         {
             ++num_fails;
@@ -75,8 +75,8 @@ int test_any_of()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        const auto actual = any_of(tc.v.begin(), tc.v.end(), [](int i)
-                                   { return i == 1; });
+        const auto actual = mystl::any_of(tc.v.begin(), tc.v.end(), [](int i)
+                                          { return i == 1; });
         if (tc.expected != actual)
         {
             ++num_fails;
@@ -111,8 +111,8 @@ int test_none_of()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        const auto actual = none_of(tc.v.begin(), tc.v.end(), [](int i)
-                                    { return i == 1; });
+        const auto actual = mystl::none_of(tc.v.begin(), tc.v.end(), [](int i)
+                                           { return i == 1; });
         if (tc.expected != actual)
         {
             ++num_fails;
@@ -149,7 +149,7 @@ int test_for_each()
     for (const auto &tc : test_cases)
     {
         Sum s;
-        const auto actual = for_each(tc.v.begin(), tc.v.end(), s);
+        const auto actual = mystl::for_each(tc.v.begin(), tc.v.end(), s);
         if (tc.expected != actual.sum)
         {
             ++num_fails;
@@ -188,8 +188,8 @@ int test_for_each_n()
     for (const auto &tc : test_cases)
     {
         auto v = tc.v;
-        for_each_n(v.begin(), tc.n, [](int &i)
-                   { i += 1; });
+        mystl::for_each_n(v.begin(), tc.n, [](int &i)
+                          { i += 1; });
         if (tc.expected != v)
         {
             ++num_fails;
@@ -228,7 +228,7 @@ int test_count()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto actual = count(tc.v.begin(), tc.v.end(), tc.n);
+        auto actual = mystl::count(tc.v.begin(), tc.v.end(), tc.n);
         if (tc.expected != actual)
         {
             ++num_fails;
@@ -264,8 +264,8 @@ int test_count_if()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto actual = count_if(tc.v.begin(), tc.v.end(), [](int i)
-                               { return i % 2 == 0; });
+        auto actual = mystl::count_if(tc.v.begin(), tc.v.end(), [](int i)
+                                      { return i % 2 == 0; });
         if (tc.expected != actual)
         {
             ++num_fails;
@@ -298,7 +298,7 @@ int test_mismatch()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto p = ::mismatch(tc.v1.begin(), tc.v1.end(), tc.v2.begin());
+        auto p = mystl::mismatch(tc.v1.begin(), tc.v1.end(), tc.v2.begin());
         const auto actual1 = std::distance(tc.v1.begin(), p.first);
         const auto actual2 = std::distance(tc.v2.begin(), p.second);
 
@@ -340,7 +340,7 @@ int test_find()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto it = find(tc.v.begin(), tc.v.end(), tc.value);
+        auto it = mystl::find(tc.v.begin(), tc.v.end(), tc.value);
         const auto actual = std::distance(tc.v.begin(), it);
         if (tc.expected != actual)
         {
@@ -377,8 +377,8 @@ int test_find_if()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto it = find_if(tc.v.begin(), tc.v.end(), [](const auto &i)
-                          { return i % 2 == 0; });
+        auto it = mystl::find_if(tc.v.begin(), tc.v.end(), [](const auto &i)
+                                 { return i % 2 == 0; });
         const auto actual = std::distance(tc.v.begin(), it);
         if (tc.expected != actual)
         {
@@ -414,8 +414,8 @@ int test_find_if_not()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto it = find_if_not(tc.v.begin(), tc.v.end(), [](const auto &i)
-                              { return i % 2 == 1; });
+        auto it = mystl::find_if_not(tc.v.begin(), tc.v.end(), [](const auto &i)
+                                     { return i % 2 == 1; });
         const auto actual = std::distance(tc.v.begin(), it);
         if (tc.expected != actual)
         {
@@ -463,7 +463,7 @@ int test_find_end()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto it = find_end(tc.v1.begin(), tc.v1.end(), tc.v2.begin(), tc.v2.end());
+        auto it = mystl::find_end(tc.v1.begin(), tc.v1.end(), tc.v2.begin(), tc.v2.end());
         const auto actual = std::distance(tc.v1.begin(), it);
         if (tc.expected != actual)
         {
@@ -515,7 +515,7 @@ int test_find_first_of()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto it = find_first_of(tc.v1.begin(), tc.v1.end(), tc.v2.begin(), tc.v2.end());
+        auto it = mystl::find_first_of(tc.v1.begin(), tc.v1.end(), tc.v2.begin(), tc.v2.end());
         const auto actual = std::distance(tc.v1.begin(), it);
         if (tc.expected != actual)
         {
@@ -553,7 +553,7 @@ int test_adjacent_find()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto it = adjacent_find(tc.v.begin(), tc.v.end());
+        auto it = mystl::adjacent_find(tc.v.begin(), tc.v.end());
         const auto actual = std::distance(tc.v.begin(), it);
         if (tc.expected != actual)
         {
@@ -600,7 +600,7 @@ int test_search()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto it = ::search(tc.v1.begin(), tc.v1.end(), tc.v2.begin(), tc.v2.end());
+        auto it = mystl::search(tc.v1.begin(), tc.v1.end(), tc.v2.begin(), tc.v2.end());
         const auto actual = std::distance(tc.v1.begin(), it);
         if (tc.expected != actual)
         {
@@ -647,7 +647,7 @@ int test_search_n()
     int num_fails = 0;
     for (const auto &tc : test_cases)
     {
-        auto it = search_n(tc.v.begin(), tc.v.end(), tc.n, tc.value);
+        auto it = mystl::search_n(tc.v.begin(), tc.v.end(), tc.n, tc.value);
         const auto actual = std::distance(tc.v.begin(), it);
         if (tc.expected != actual)
         {
@@ -690,7 +690,7 @@ int test_copy()
     for (const auto &tc : test_cases)
     {
         std::vector<int> actual(tc.expected.size(), 0);
-        auto it = ::copy(tc.v.begin() + tc.first_index, tc.v.begin() + tc.last_index, actual.begin());
+        auto it = mystl::copy(tc.v.begin() + tc.first_index, tc.v.begin() + tc.last_index, actual.begin());
         const auto actual_it_distance = std::distance(actual.begin(), it);
         const ptrdiff_t expected_it_distance = tc.last_index - tc.first_index;
         if (tc.expected != actual || expected_it_distance != actual_it_distance)
@@ -729,8 +729,8 @@ int test_copy_if()
     for (const auto &tc : test_cases)
     {
         std::vector<int> actual;
-        (void)::copy_if(tc.v.begin(), tc.v.end(), std::back_inserter(actual), [=](const int i)
-                        { return i % 2 == 0; });
+        (void)mystl::copy_if(tc.v.begin(), tc.v.end(), std::back_inserter(actual), [=](const int i)
+                             { return i % 2 == 0; });
         if (tc.expected != actual)
         {
             ++num_fails;
@@ -760,7 +760,7 @@ int test_copy_backward()
     for (const auto &tc : test_cases)
     {
         std::vector<int> actual(tc.v.size(), 0);
-        const auto it = ::copy_backward(tc.v.begin(), tc.v.end(), actual.end());
+        const auto it = mystl::copy_backward(tc.v.begin(), tc.v.end(), actual.end());
         const auto ret_it_dist = std::distance(actual.begin(), it);
         if (tc.expected != actual || ret_it_dist != 0)
         {
@@ -821,10 +821,10 @@ int test_move()
     {
         std::vector<CantCopy> v2(tc.v.size());
         // Move constructor
-        (void)::move(tc.v.begin(), tc.v.end(), v2.begin());
+        (void)mystl::move(tc.v.begin(), tc.v.end(), v2.begin());
         // Move assignment
         std::vector<CantCopy> actual(tc.v.size());
-        const auto it = ::move(v2.begin(), v2.end(), actual.begin());
+        const auto it = mystl::move(v2.begin(), v2.end(), actual.begin());
         const ptrdiff_t it_distance = std::distance(it, actual.end());
         if (!std::equal(tc.expected.begin(), tc.expected.end(), actual.begin(), actual.end(), [](const auto &i1, const auto &i2)
                         { return i1 == i2; }) ||
@@ -859,10 +859,10 @@ int test_move_backward()
     {
         std::vector<CantCopy> v2(tc.v.size());
         // Move constructor
-        (void)::move_backward(tc.v.begin(), tc.v.end(), v2.end());
+        (void)mystl::move_backward(tc.v.begin(), tc.v.end(), v2.end());
         // Move assignment
         std::vector<CantCopy> actual(tc.v.size());
-        const auto it = ::move_backward(v2.begin(), v2.end(), actual.end());
+        const auto it = mystl::move_backward(v2.begin(), v2.end(), actual.end());
         const ptrdiff_t it_distance = std::distance(actual.begin(), it);
         if (!std::equal(tc.expected.begin(), tc.expected.end(), actual.begin(), actual.end(), [](const auto &i1, const auto &i2)
                         { return i1 == i2; }) ||
@@ -882,7 +882,7 @@ int test_move_backward()
 int test_fill()
 {
     std::vector<int> v = {0, 0, 0};
-    ::fill(v.begin(), v.begin() + 2, 1);
+    mystl::fill(v.begin(), v.begin() + 2, 1);
     const std::vector<int> expected = {1, 1, 0};
     int num_fails = 0;
     if (expected != v)
@@ -899,7 +899,7 @@ int test_fill()
 int test_fill_n()
 {
     std::vector<int> v = {0, 0, 0};
-    ::fill_n(v.begin(), 2, 1);
+    mystl::fill_n(v.begin(), 2, 1);
     const std::vector<int> expected = {1, 1, 0};
     int num_fails = 0;
     if (expected != v)
@@ -918,8 +918,8 @@ int test_transform()
     // unary transform
     const std::vector<int> v = {1, 2, 3};
     std::vector<int> v2 = {0, 0, 0};
-    ::transform(v.begin(), v.end(), v2.begin(), [](const auto i)
-                { return i + 1; });
+    mystl::transform(v.begin(), v.end(), v2.begin(), [](const auto i)
+                     { return i + 1; });
     const std::vector<int> expected = {2, 3, 4};
     int num_fails = 0;
     if (expected != v2)
@@ -933,8 +933,8 @@ int test_transform()
 
     // binary transform
     const std::vector<int> expected2 = {3, 5, 7};
-    ::transform(v.begin(), v.end(), v2.begin(), v2.begin(), [](const auto i1, const auto i2)
-                { return i1 + i2; });
+    mystl::transform(v.begin(), v.end(), v2.begin(), v2.begin(), [](const auto i1, const auto i2)
+                     { return i1 + i2; });
     if (expected2 != v2)
     {
         ++num_fails;
@@ -949,8 +949,8 @@ int test_transform()
 int test_generate()
 {
     std::vector<int> v = {0, 0, 0};
-    ::generate(v.begin(), v.end(), []()
-               { return 1; });
+    mystl::generate(v.begin(), v.end(), []()
+                    { return 1; });
     const std::vector<int> expected = {1, 1, 1};
     int num_fails = 0;
     if (expected != v)
@@ -967,8 +967,8 @@ int test_generate()
 int test_generate_n()
 {
     std::vector<int> v = {0, 0, 0};
-    ::generate_n(v.begin(), v.size(), []()
-                 { return 1; });
+    mystl::generate_n(v.begin(), v.size(), []()
+                      { return 1; });
     const std::vector<int> expected = {1, 1, 1};
     int num_fails = 0;
     if (expected != v)
@@ -986,7 +986,7 @@ int test_swap()
 {
     int a = 1;
     int b = 2;
-    ::swap(a, b);
+    mystl::swap(a, b);
     int num_fails = 0;
     if (a != 2 || b != 1)
     {
@@ -1027,8 +1027,6 @@ int main()
                           test_transform() +
                           test_generate() +
                           test_generate_n() +
-                          test_generate();
-    test_transform();
                           test_swap();
 
     return num_fails == 0 ? 0 : 1;
