@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <iterator>
 
 namespace mystl // "mystd" didn't sound right. :-)
@@ -384,6 +383,32 @@ namespace mystl // "mystd" didn't sound right. :-)
             *first++ = g();
         }
         return first;
+    }
+
+    template <class ForwardIt, class UnaryPredicate>
+    constexpr ForwardIt remove_if(ForwardIt first, ForwardIt last, UnaryPredicate p)
+    {
+        first = mystl::find_if(first, last, p);
+        if (first == last)
+        {
+            return last;
+        }
+        ForwardIt it = first;
+        for (++first; first != last; ++first)
+        {
+            if (!p(*first))
+            {
+                *it++ = std::move(*first);
+            }
+        }
+        return it;
+    }
+
+    template <class ForwardIt, class T>
+    constexpr ForwardIt remove(ForwardIt first, ForwardIt last, const T &value)
+    {
+        return mystl::remove_if(first, last, [&](const auto &e)
+                                { return value == e; });
     }
 
     template <class T>

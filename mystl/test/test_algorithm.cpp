@@ -982,6 +982,56 @@ int test_generate_n()
     return num_fails;
 }
 
+int test_remove()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        std::vector<int> expected;
+        std::ptrdiff_t exp_dist;
+    };
+    const TestCase test_cases[] = {
+        {{}, {}, 0},
+        {{0}, {0}, 0},
+        {{1}, {1}, 1},
+        {{1, 0}, {1, 0}, 1},
+        {{0, 1}, {1, 1}, 1},
+        {{0, 1, 2}, {1, 2, 2}, 2},
+        {{1, 0, 2}, {1, 2, 2}, 2},
+        {{1, 2, 0}, {1, 2, 0}, 2},
+        {{0, 0, 1}, {1, 0, 1}, 1},
+        {{0, 1, 0}, {1, 1, 0}, 1},
+        {{1, 0, 0}, {1, 0, 0}, 1},
+        {{1, 2, 3, 0}, {1, 2, 3, 0}, 3},
+        {{1, 2, 0, 3}, {1, 2, 3, 3}, 3},
+        {{1, 0, 2, 3}, {1, 2, 3, 3}, 3},
+        {{0, 1, 2, 3}, {1, 2, 3, 3}, 3},
+        {{1, 2, 0, 0}, {1, 2, 0, 0}, 2},
+        {{1, 0, 2, 0}, {1, 2, 2, 0}, 2},
+        {{1, 0, 0, 2}, {1, 2, 0, 2}, 2},
+        {{0, 1, 2, 0}, {1, 2, 2, 0}, 2},
+        {{0, 1, 0, 2}, {1, 2, 0, 2}, 2},
+        {{0, 0, 1, 2}, {1, 2, 1, 2}, 2},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        auto v = tc.v;
+        const auto act_dist = std::distance(v.begin(), mystl::remove(v.begin(), v.end(), 0));
+        if (tc.expected != v || tc.exp_dist != act_dist)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ")"
+                      << ", expected: " << vec_to_string(tc.expected)
+                      << ", actual: " << vec_to_string(v)
+                      << ", exp_dist: " << tc.exp_dist
+                      << ", act_dist: " << act_dist
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int test_swap()
 {
     int a = 1;
@@ -1027,6 +1077,7 @@ int main()
                           test_transform() +
                           test_generate() +
                           test_generate_n() +
+                          test_remove() +
                           test_swap();
 
     return num_fails == 0 ? 0 : 1;
