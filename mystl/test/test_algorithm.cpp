@@ -1032,6 +1032,42 @@ int test_remove()
     return num_fails;
 }
 
+int test_remove_copy()
+{
+    struct TestCase
+    {
+        std::vector<int> v;
+        std::vector<int> expected;
+    };
+    const TestCase test_cases[] = {
+        {{}, {}},
+        {{1}, {}},
+        {{2}, {2}},
+        {{1, 2}, {2}},
+        {{2, 1}, {2}},
+        {{1, 2, 1}, {2}},
+        {{1, 2, 1, 4}, {2, 4}},
+        {{2, 1, 4, 1}, {2, 4}},
+    };
+    int num_fails = 0;
+    for (const auto &tc : test_cases)
+    {
+        std::vector<int> actual(tc.expected.size(), 0);
+        const auto it = mystl::remove_copy(tc.v.begin(), tc.v.end(), actual.begin(), 1);
+        const bool is_ret_it_correct = it == actual.end();
+        if (tc.expected != actual || !is_ret_it_correct)
+        {
+            ++num_fails;
+            std::cerr << "FAIL, " << __FUNCTION__ << "(v: " << vec_to_string(tc.v) << ")"
+                      << ", expected: " << vec_to_string(tc.expected)
+                      << ", actual: " << vec_to_string(actual)
+                      << ", is_ret_it_correct: " << is_ret_it_correct
+                      << "\n";
+        }
+    }
+    return num_fails;
+}
+
 int test_swap()
 {
     int a = 1;
@@ -1078,6 +1114,7 @@ int main()
                           test_generate() +
                           test_generate_n() +
                           test_remove() +
+                          test_remove_copy() +
                           test_swap();
 
     return num_fails == 0 ? 0 : 1;

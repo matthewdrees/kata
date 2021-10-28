@@ -411,6 +411,20 @@ namespace mystl // "mystd" didn't sound right. :-)
                                 { return value == e; });
     }
 
+    template <class InputIt, class OutputIt, class UnaryPredicate>
+    constexpr OutputIt remove_copy_if(InputIt first, InputIt last, OutputIt d_first, UnaryPredicate p)
+    {
+        return copy_if(first, last, d_first, [&](const auto &e)
+                       { return !p(e); });
+    }
+
+    template <class InputIt, class OutputIt, class T>
+    constexpr OutputIt remove_copy(InputIt first, InputIt last, OutputIt d_first, const T &value)
+    {
+        return remove_copy_if(first, last, d_first, [&](const auto &e)
+                              { return value == e; });
+    }
+
     template <class T>
     constexpr void swap(T &a, T &b) noexcept
     {
