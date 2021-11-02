@@ -10,9 +10,10 @@ class Solution {
 public:
     int findKthLargest(std::vector<int>& nums, int k)
     {
-        assert(k >= 1 && k <= 10000);
-        std::sort(begin(nums), end(nums));
-        return nums.at(nums.size() - static_cast<size_t>(k));
+        assert(k >= 1 && k <= 10000 && static_cast<size_t>(k) <= nums.size());
+        auto nth = end(nums) - k;
+        std::nth_element(begin(nums), nth, end(nums));
+        return *nth;
     }
 };
 
