@@ -20,19 +20,22 @@ def get_letter_groups(s: str):
     return lgs
 
 
-def is_stretchy_word(lgs1, word):
-    lgs2 = get_letter_groups(word)
-    if len(lgs1) != len(lgs2):
+def is_stretchy_word(lgs, word):
+    word_len = len(word)
+    if word_len == 0:
         return False
-    for lg1, lg2 in zip(lgs1, lgs2):
-        if lg1[0] != lg2[0]:
-            return False
-        if lg1[1] == lg2[1]:
+    i = 0
+    for c1, size1 in lgs:
+        j = i
+        while i < word_len and c1 == word[i]:
+            i += 1
+        size2 = i - j
+        if size1 == size2:
             continue
-        if lg1[1] >= 3 and lg2[1] <= lg1[1]:
+        if size1 >= 3 and size2 <= size1 and size2 > 0:
             continue
         return False
-    return True
+    return i == word_len
 
 
 class Solution:
@@ -44,6 +47,7 @@ class Solution:
 if __name__ == "__main__":
     tests = (
         ("heeellooo", ["hello", "hi", "helo"], 1),
+        ("heeellooo", ["heeelloooworld"], 0),
         ("zzzzzyyyyy", ["zzyy", "zy", "zyy"], 3),
         ("a", ["a", "b", ""], 1),
         ("aa", ["a", "b", ""], 0),
