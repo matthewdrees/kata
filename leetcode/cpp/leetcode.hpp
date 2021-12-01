@@ -16,4 +16,19 @@ std::string to_string(const std::vector<T>& v)
     return oss.str();
 }
 
+template <typename T>
+std::string to_string(const std::vector<std::vector<T>>& v)
+{
+    std::ostringstream oss;
+    oss << '{';
+    for (const auto row : v) {
+        oss << '{';
+        for (const auto x : row) {
+            oss << x << ',';
+        }
+        oss << "\b},"; // \b chomps the last comma.
+    }
+    oss << "\b}"; // \b chomps the last comma.
+    return oss.str();
+}
 }
