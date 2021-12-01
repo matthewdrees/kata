@@ -4,10 +4,8 @@ from typing import List
 
 class Solution:
     def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:
-        distance_points = [[p[0] ** 2 + p[1] ** 2, p] for p in points]
-        distance_points.sort(key=lambda x: x[0])
-        closest = [dp[1] for dp in distance_points[:k]]
-        return closest
+        points.sort(key=lambda x: x[0] * x[0] + x[1] * x[1])
+        return points[:k]
 
 
 if __name__ == "__main__":
