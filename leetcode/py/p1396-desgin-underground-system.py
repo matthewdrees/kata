@@ -8,7 +8,7 @@ class UndergroundSystem:
         # id -> (start_station_name, start_time)
         self.current_rides = {}
 
-        # (start_station_name, end_station_name) -> (total_time, num_rides)
+        # (start_station_name, end_station_name) -> [total_time, num_rides]
         self.route_times = {}
 
     def checkIn(self, id: int, stationName: str, t: int) -> None:
@@ -17,7 +17,7 @@ class UndergroundSystem:
     def checkOut(self, id: int, stationName: str, t: int) -> None:
         start_station_name, t1 = self.current_rides.pop(id)
         key = (start_station_name, stationName)
-        trip_time = float(t - t1)
+        trip_time = t - t1
         trips_info = self.route_times.get(key)
         if trips_info:
             trips_info[0] += trip_time
@@ -27,10 +27,8 @@ class UndergroundSystem:
 
     def getAverageTime(self, startStation: str, endStation: str) -> float:
         key = (startStation, endStation)
-        trips_info = self.route_times.get(key)
-        if trips_info:
-            return trips_info[0] / trips_info[1]
-        return 0.0
+        total_time, num_trips = self.route_times.get(key)
+        return total_time / num_trips
 
 
 if __name__ == "__main__":
