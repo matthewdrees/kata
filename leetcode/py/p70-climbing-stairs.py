@@ -4,6 +4,19 @@ import math
 
 class Solution:
     def climbStairs(self, n: int) -> int:
+        if n <= 3:
+            return n
+        n1 = 2
+        n2 = 3
+        for _ in range(3, n):
+            tmp = n1 + n2
+            n1 = n2
+            n2 = tmp
+        return n2
+
+
+class Solution2:
+    def climbStairs(self, n: int) -> int:
         ones = n - 2
         twos = 1
         permutations = 1
