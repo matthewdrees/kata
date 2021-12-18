@@ -1,19 +1,21 @@
 # LeetCode 36. Valid Sudoku
 from typing import List
+import array
 
 
 class Solution:
     def isValidSudoku(self, board: List[List[str]]) -> bool:
-        cols = [[] for _ in range(9)]
-        squares = [[] for _ in range(9)]
-        row_l = []
+        cols = [array.array("b") for _ in range(9)]
+        squares = [array.array("b") for _ in range(9)]
         for y, row in enumerate(board):
+            rowa = array.array("b")
             for x, n in enumerate(row):
                 if n == ".":
                     continue
-                if n in row_l:
+                n = int(n)
+                if n in rowa:
                     return False
-                row_l.append(n)
+                rowa.append(n)
                 if n in cols[x]:
                     return False
                 cols[x].append(n)
@@ -21,7 +23,6 @@ class Solution:
                 if n in squares[sq]:
                     return False
                 squares[sq].append(n)
-            row_l.clear()
         return True
 
 
