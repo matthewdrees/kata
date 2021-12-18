@@ -8,7 +8,6 @@ class Solution:
         squares = [[] for _ in range(9)]
         row_l = []
         for y, row in enumerate(board):
-            sq_y = y // 3 * 3
             for x, n in enumerate(row):
                 if n == ".":
                     continue
@@ -18,7 +17,7 @@ class Solution:
                 if n in cols[x]:
                     return False
                 cols[x].append(n)
-                sq = sq_y + x // 3
+                sq = (y // 3) * 3 + x // 3
                 if n in squares[sq]:
                     return False
                 squares[sq].append(n)
