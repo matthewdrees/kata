@@ -1,28 +1,30 @@
 # LeetCode 36. Valid Sudoku
 from typing import List
-import array
+
+import pyperf
 
 
 class Solution:
     def isValidSudoku(self, board: List[List[str]]) -> bool:
-        cols = [array.array("b") for _ in range(9)]
-        squares = [array.array("b") for _ in range(9)]
-        for y, row in enumerate(board):
-            rowa = array.array("b")
-            for x, n in enumerate(row):
+        col_vals = [set() for _ in range(9)]
+        sq_vals = [set() for _ in range(9)]
+        for y in range(9):
+            row = board[y]
+            row_vals = set()
+            for x in range(9):
+                n = row[x]
                 if n == ".":
                     continue
-                n = int(n)
-                if n in rowa:
+                if n in row_vals:
                     return False
-                rowa.append(n)
-                if n in cols[x]:
+                row_vals.add(n)
+                if n in col_vals[x]:
                     return False
-                cols[x].append(n)
+                col_vals[x].add(n)
                 sq = (y // 3) * 3 + x // 3
-                if n in squares[sq]:
+                if n in sq_vals[sq]:
                     return False
-                squares[sq].append(n)
+                sq_vals[sq].add(n)
         return True
 
 
@@ -62,3 +64,7 @@ if __name__ == "__main__":
         act = solution.isValidSudoku(board)
         if exp != act:
             print(f"Fail. board: {board}, exp: {exp}, act: {act}")
+
+    # board = tests[0][0]
+    # runner = pyperf.Runner()
+    # runner.bench_func("f", solution.isValidSudoku, board)
