@@ -3,23 +3,13 @@
 
 class Solution:
     def licenseKeyFormatting(self, s: str, k: int) -> str:
-        s = s.upper()
-        num_dashes = s.count("-")
-        ik = (len(s) - num_dashes) % k
-        if ik == 0:
-            ik = k
+        s2 = s.replace("-", "").upper()
         l = []
-        for c in s:
-            if c == "-":
-                continue
-            l.append(c)
-            ik -= 1
-            if ik == 0:
-                l.append("-")
-                ik = k
-        if len(l) > 0 and l[-1] == "-":
-            l.pop()
-        return "".join(l)
+        ik = len(s2) % k
+        if ik != 0:
+            l = [s2[:ik]]
+        l.extend([s2[i : i + k] for i in range(ik, len(s2), k)])
+        return "-".join(l)
 
 
 if __name__ == "__main__":
