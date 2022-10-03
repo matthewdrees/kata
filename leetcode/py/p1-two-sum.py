@@ -1,16 +1,18 @@
+from typing import List
+
+
 class Solution:
-    def twoSum(self, nums, target: int):
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
         # value -> index mapping
         d = {}
-        for x in range(len(nums)):
-            num = nums[x]
-            ans = target - num
+        for x, n in enumerate(nums):
+            ans = target - n
             if ans in d:
                 return [d[ans], x]
-            d[num] = x
+            d[n] = x
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     s = Solution()
     tests = (
         ([1, 1], 2, [0, 1]),
@@ -22,12 +24,7 @@ if __name__ == '__main__':
         ([2, 7, 11, 15], 22, [1, 3]),
         ([2, 7, 11, 15], 26, [2, 3]),
     )
-    for test in tests:
-        nums = test[0]
-        target = test[1]
-        exp = test[2]
+    for nums, target, exp in tests:
         ans = s.twoSum(nums, target)
         if exp != ans:
-            print(
-                f'FAIL. nums: {nums}, target: {target}, exp: {exp}, ans: {ans}'
-            )
+            print(f"FAIL. nums: {nums}, target: {target}, exp: {exp}, ans: {ans}")
