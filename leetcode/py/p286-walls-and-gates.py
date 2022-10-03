@@ -4,6 +4,42 @@ from typing import List
 
 
 class Solution:
+    def wallsAndGates(self, rooms: List[List[int]]) -> None:
+        """
+        Do not return anything, modify rooms in-place instead.
+        """
+        m, n = len(rooms), len(rooms[0])
+
+        base = []
+        for i in range(m):
+            for j in range(n):
+                if rooms[i][j] == 0:
+                    base.append((i, j))
+        d = 0
+        while base:
+            togo = []
+            for i, j in base:
+                if j > 0:
+                    if rooms[i][j - 1] > d + 1:
+                        togo.append((i, j - 1))
+                        rooms[i][j - 1] = d + 1
+                if i > 0:
+                    if rooms[i - 1][j] > d + 1:
+                        togo.append((i - 1, j))
+                        rooms[i - 1][j] = d + 1
+                if j < n - 1:
+                    if rooms[i][j + 1] > d + 1:
+                        togo.append((i, j + 1))
+                        rooms[i][j + 1] = d + 1
+                if i < m - 1:
+                    if rooms[i + 1][j] > d + 1:
+                        togo.append((i + 1, j))
+                        rooms[i + 1][j] = d + 1
+            base = togo
+            d += 1
+
+
+class Solution2:
     def rec(self, x, y, d):
         if x < 0 or x >= self.len_x or y < 0 or y >= self.len_y:
             return
