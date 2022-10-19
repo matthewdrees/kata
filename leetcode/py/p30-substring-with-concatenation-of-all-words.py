@@ -4,36 +4,36 @@ import collections
 
 
 class Solution:
-    def findSubstring(self, s: str, words: List[str]) -> List[int]:
-        word_counter = collections.Counter()
-        word_counter.update(words)
-        d = collections.OrderedDict()
-        word_len = len(words[0])
-        for i in range(0, len(s) - word_len + 1):
-            w = s[i : i + word_len]
-            if w in word_counter:
-                d[i] = w
+    def findSubstringOnOffset(
+        self, offset, word_len, words_len, s, words_counter
+    ) -> List[int]:
         substring_indexes = []
-        while d:
-            cur_word_counter = collections.Counter()
-            i = next(iter(d))
-            word_queue = []
-            keys_to_remove = [i]
-            while True:
-                w = d[i]
+        cur_word_counter = collections.Counter()
+        word_queue = []
+        for i in range(offset, len(s) - word_len + 1, word_len):
+            w = s[i : i + word_len]
+            if w in words_counter:
                 word_queue.append(w)
                 cur_word_counter[w] += 1
-                if len(word_queue) > len(words):
+                if len(word_queue) > words_len:
                     cur_word_counter[word_queue.pop(0)] -= 1
-                if cur_word_counter == word_counter:
-                    substring_indexes.append(i - word_len * (len(words) - 1))
-                i += word_len
-                if i not in d:
-                    break
-                keys_to_remove.append(i)
-            for key in keys_to_remove:
-                del d[key]
-        substring_indexes.sort()
+                if cur_word_counter == words_counter:
+                    substring_indexes.append(i - word_len * (words_len - 1))
+            else:
+                word_queue.clear()
+                cur_word_counter.clear()
+        return substring_indexes
+
+    def findSubstring(self, s: str, words: List[str]) -> List[int]:
+        words_counter = collections.Counter(words)
+        word_len = len(words[0])
+        substring_indexes = []
+        for offset in range(word_len):
+            substring_indexes.extend(
+                self.findSubstringOnOffset(
+                    offset, word_len, len(words), s, words_counter
+                )
+            )
         return substring_indexes
 
 
@@ -48,6 +48,7 @@ if __name__ == "__main__":
     solution = Solution()
     for s, words, exp in test_cases:
         act = solution.findSubstring(s, words)
+        act.sort()
         if exp != act:
             print(
                 f"FAIL. findSubstring(s: {s}, words: {words}), exp: {exp}, act: {act}"
