@@ -1,14 +1,15 @@
 // LeetCode 1119. Remove Vowels from a String.
-
-use std::collections::HashSet;
-
 struct Solution {}
 
 impl Solution {
-    pub fn remove_vowels(mut s: String) -> String {
-        let vowels = HashSet::from(['a', 'e', 'i', 'o', 'u']);
-        s.retain(|x| !vowels.contains(&x));
-        return s;
+    pub fn remove_vowels(s: String) -> String {
+        let mut ret = String::with_capacity(s.len());
+        for c in s.chars() {
+            if c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' {
+                ret.push(c);
+            }
+        }
+        return ret;
     }
 }
 
