@@ -58,10 +58,8 @@ public:
                 const auto n2 = nums[i + 1];
                 if (n1 < n2) {
                     auto j = nums.size();
-                    while (j-- > i + 1) {
-                        if (n1 < nums[j]) {
-                            break;
-                        }
+                    while (j-- > i + 1 && n1 >= nums[j]) {
+                        // burn through loop
                     }
                     std::swap(nums[i], nums[j]);
                     std::reverse(nums.begin() + i + 1, nums.end());
