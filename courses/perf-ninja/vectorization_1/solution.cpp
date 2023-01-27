@@ -28,7 +28,7 @@ inline T max(T a, T b)
 }
 
 using score_t = int16_t;
-using column_t = std::array<score_t, sequence_size_v + 1>;
+using column_t = std::array<score_t, sequence_size_v>;
 
 std::string to_string(const column_t &c)
 {
@@ -76,10 +76,10 @@ result_t compute_alignment(std::vector<sequence_t> const &sequences1,
         /*
          * Initialise score values.
          */
-        score_t gap_open{-11};
-        score_t gap_extension{-1};
-        score_t match{6};
-        score_t mismatch{-4};
+        const score_t gap_open{-11};
+        const score_t gap_extension{-1};
+        const score_t match{6};
+        const score_t mismatch{-4};
 
         /*
          * Setup the matrix.
@@ -89,15 +89,9 @@ result_t compute_alignment(std::vector<sequence_t> const &sequences1,
          */
         column_t score_column{};
         column_t horizontal_gap_column{};
-        score_t last_vertical_gap{};
+        score_t last_vertical_gap = gap_open;
 
-        /*
-         * Initialise the first column of the matrix.
-         */
-        horizontal_gap_column[0] = gap_open;
-        last_vertical_gap = gap_open;
-
-        for (size_t i = 1; i < score_column.size(); ++i)
+        for (size_t i = 0; i < score_column.size(); ++i)
         {
             score_column[i] = last_vertical_gap;
             horizontal_gap_column[i] = last_vertical_gap + gap_open;
@@ -106,47 +100,49 @@ result_t compute_alignment(std::vector<sequence_t> const &sequences1,
         std::cout << "score_column: " << to_string(score_column) << "\n";
         std::cout << "horizontal_gap_column: " << to_string(horizontal_gap_column) << "\n";
 
+        score_t last_score{};
+        score_t last_horizontal_gap = gap_open;
         /*
          * Compute the main recursion to fill the matrix.
          */
-        for (unsigned col = 1; col <= sequence2.size(); ++col)
+        for (unsigned col = 0; col < sequence2.size(); ++col)
         {
             score_t last_diagonal_score =
-                score_column[0]; // Cache last diagonal score to compute this cell.
-            score_column[0] = horizontal_gap_column[0];
-            score_t _last_vertical_gap = horizontal_gap_column[0] + gap_open;
-            horizontal_gap_column[0] += gap_extension;
+                last_score; // Cache last diagonal score to compute this cell.
+            last_score = last_horizontal_gap;
+            score_t last_vertical_gap = last_horizontal_gap + gap_open;
+            last_horizontal_gap += gap_extension;
 
-            for (unsigned row = 1; row <= sequence1.size(); ++row)
+            for (unsigned row = 0; row < sequence1.size(); ++row)
             {
                 // Compute next score from diagonal direction with match/mismatch.
                 score_t best_cell_score =
                     last_diagonal_score +
-                    (sequence1[row - 1] == sequence2[col - 1] ? match : mismatch);
+                    (sequence1[row] == sequence2[col] ? match : mismatch);
                 // Determine best score from diagonal, vertical, or horizontal
                 // direction.
-                best_cell_score = max(best_cell_score, _last_vertical_gap);
+                best_cell_score = max(best_cell_score, last_vertical_gap);
                 best_cell_score = max(best_cell_score, horizontal_gap_column[row]);
                 // Cache next diagonal value and store optimum in score_column.
                 last_diagonal_score = score_column[row];
                 score_column[row] = best_cell_score;
                 // Compute the next values for vertical and horizontal gap.
                 best_cell_score += gap_open;
-                _last_vertical_gap += gap_extension;
+                last_vertical_gap += gap_extension;
                 horizontal_gap_column[row] += gap_extension;
                 // Store optimum between gap open and gap extension.
-                _last_vertical_gap = max(_last_vertical_gap, best_cell_score);
+                last_vertical_gap = max(last_vertical_gap, best_cell_score);
                 horizontal_gap_column[row] =
                     max(horizontal_gap_column[row], best_cell_score);
                 std::cout << "sq: " << sequence_idx
                           << ", c: " << col
                           << ", r: " << row
-                          << ", s1[" << row - 1 << "]: " << static_cast<uint16_t>(sequence1[row - 1])
-                          << ", s2[" << row - 1 << "]: " << static_cast<uint16_t>(sequence2[row - 1])
-                          << ", s2[" << col - 1 << "]: " << static_cast<uint16_t>(sequence2[col - 1])
+                          << ", s1[" << row - 1 << "]: " << static_cast<uint16_t>(sequence1[row])
+                          << ", s2[" << row - 1 << "]: " << static_cast<uint16_t>(sequence2[row])
+                          << ", s2[" << col - 1 << "]: " << static_cast<uint16_t>(sequence2[col])
                           << ", bcs: " << best_cell_score
                           << ", lds: " << last_diagonal_score
-                          << ", lvg: " << _last_vertical_gap
+                          << ", lvg: " << last_vertical_gap
                           << ", score: " << to_string(score_column)
                           << ", hgc: " << to_string(horizontal_gap_column)
                           << "\n";
