@@ -1,6 +1,7 @@
 // perf-ninja vectorization_2 solution.
 #include <array>
 #include <cstdint>
+#include <limits>
 
 #include <iostream>
 
@@ -11,13 +12,18 @@ using Blob = std::array<uint16_t, N>;
 
 uint16_t checksum(const Blob &blob)
 {
-    uint16_t acc = 0;
+    // Don't worry about overflowing uint32_t for this exercise.
+    uint32_t acc = 0;
     for (auto value : blob)
     {
         acc += value;
-        acc += acc < value; // add carry
     }
-    return acc;
+    while (acc > std::numeric_limits<uint16_t>::max())
+    {
+        acc = (acc & 0xffff) + (acc >> 16);
+    }
+
+    return static_cast<uint16_t>(acc);
 }
 
 int main()
