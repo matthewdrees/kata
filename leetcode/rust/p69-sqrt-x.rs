@@ -7,16 +7,16 @@ impl Solution {
         if x >= 2147395600 {
             return 46340;
         }
+        let x: i64 = x.into();
         let mut ans: i64 = 0;
         let mut base: i64 = 32768; // 2^15
         let mut factor: i64 = 16384; // 2^14
         loop {
             let n = base * base;
-            // leetcode at 1.58, can't use into().
-            if n == x as i64 {
+            if n == x {
                 ans = base;
                 break;
-            } else if n < x as i64 {
+            } else if n < x {
                 ans = base;
                 base += factor;
             } else {
