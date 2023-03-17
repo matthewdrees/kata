@@ -21,7 +21,7 @@ std::string to_string(const std::vector<std::vector<T>>& v)
 {
     std::ostringstream oss;
     oss << '{';
-    for (const auto row : v) {
+    for (const auto& row : v) {
         oss << '{';
         for (const auto x : row) {
             oss << x << ',';
