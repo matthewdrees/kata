@@ -30,7 +30,7 @@ int main()
         bool exp;
     };
     const TestCase test_cases[] = {
-        // { { 2, 3, 1, 1, 4 }, true },
+        { { 2, 3, 1, 1, 4 }, true },
         { { 3, 2, 1, 0, 4 }, false },
         { { 0 }, true },
         { { 1 }, true },
