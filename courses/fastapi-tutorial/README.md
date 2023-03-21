@@ -58,3 +58,9 @@ Stop and remove the containers
 ```
 $ docker compose down
 ```
+
+## How I actually do it for now
+
+$ docker build --target builder -t fastapi-tutorial .; docker run --rm -p 80:80 -it fastapi-tutorial
+
+Note the bind mount did not work for fast changes, possibly need to start with uvicorn main:app --reload? Couldn't figure that out for now.
