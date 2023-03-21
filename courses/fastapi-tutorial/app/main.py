@@ -1,5 +1,6 @@
 from enum import Enum
 from fastapi import FastAPI
+from pydantic import BaseModel
 from typing import Union
 import time
 
@@ -38,3 +39,23 @@ async def read_skipandlimit(skip: int = 0, limit: int = 10):
     time.sleep(1.0)
     return {"skip": skip, "limit": limit}
 
+class Item(BaseModel):
+    name: str
+    description: Union[str, None] = None
+    price: float
+    tax: Union[float, None] = None
+
+l = []
+
+@app.post("/items/")
+async def create_item(item: Item):
+    item_dict = item.dict()
+    if item.tax:
+        price_with_tax = item.price + item.tax
+        item_dict.update({"price_with_tax": price_with_tax})
+    l.append(item_dict)
+    return item
+
+@app.get("/all_items/")
+async def get_all_items():
+    return {"all_items":l}
