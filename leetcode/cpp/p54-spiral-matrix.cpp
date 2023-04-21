@@ -1,5 +1,4 @@
 // LeetCode 54. Spiral Matrix.
-// #include <benchmark/benchmark.h>
 
 #include "leetcode.hpp"
 
@@ -19,44 +18,45 @@ public:
         assert(x_max >= 1);
         size_t y_min = 0;
         size_t x_min = 0;
-        std::vector<int> v(x_max * y_max);
-        auto it = v.begin();
+        std::vector<int> v;
+        v.reserve(x_max * y_max);
         while (true) {
             // right
             {
                 const auto& v2 = matrix[y_min];
-                it = std::copy(v2.begin() + x_min, v2.begin() + x_max, it);
-                if (it == v.end()) {
+                v.insert(v.end(), v2.begin() + x_min, v2.begin() + x_max);
+                ++y_min;
+                if (y_min >= y_max) {
                     break;
                 }
-                --x_max;
             }
 
             // down
-            for (size_t y = y_min + 1; y < y_max; ++y) {
-                *it++ = matrix[y][x_max];
+            --x_max;
+            for (size_t y = y_min; y < y_max; ++y) {
+                v.push_back(matrix[y][x_max]);
             }
-            if (it == v.end()) {
+            if (x_min >= x_max) {
                 break;
             }
-            --y_max;
 
             // left
+            --y_max;
             {
-                const auto& v2 = matrix[y_max];
-                it = std::reverse_copy(v2.begin() + x_min, v2.begin() + x_max, it);
-                if (it == v.end()) {
+                for (size_t x = x_max; x > x_min; --x) {
+                    v.push_back(matrix[y_max][x - 1]);
+                }
+                if (y_min >= y_max) {
                     break;
                 }
             }
 
             // up
-            for (size_t y = y_max - 1; y > y_min; --y) {
-                *it++ = matrix[y][x_min];
+            for (size_t y = y_max - 1; y >= y_min; --y) {
+                v.push_back(matrix[y][x_min]);
             }
             ++x_min;
-            ++y_min;
-            if (it == v.end()) {
+            if (x_min >= x_max) {
                 break;
             }
         }
@@ -76,6 +76,17 @@ std::vector<std::vector<int>> gen_grid(size_t m, size_t n)
     }
     return v;
 }
+
+// #include <benchmark/benchmark.h>
+// static void BM_two(benchmark::State& state)
+// {
+//     const auto v = gen_grid(state.range(0), state.range(0));
+//     Solution2 solution;
+//     for (auto _ : state) {
+//         benchmark::DoNotOptimize(solution.spiralOrder(v));
+//     }
+// }
+// BENCHMARK(BM_two)->Range(1, 10);
 
 // static void BM_one(benchmark::State& state)
 // {
