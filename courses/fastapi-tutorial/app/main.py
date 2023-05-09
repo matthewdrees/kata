@@ -1,61 +1,94 @@
-from enum import Enum
-from fastapi import FastAPI
+from typing import Annotated, Union
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
-from typing import Union
-import time
+
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": "fakehashedsecret",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "hashed_password": "fakehashedsecret2",
+        "disabled": True,
+    },
+}
 
 app = FastAPI()
 
 
-@app.get("/")
-def hello_world():
-    return {"message": "take 1"}
-
-@app.get("/items/{item_id}")
-def hello_world(item_id:str, q: Union[str, None] = None, short: bool = False):
-    item = {"item_id": item_id}
-    if q:
-        item.update({"q": q})
-    if short:
-        item.update({"description": "This is a description"})
-    return item
+def fake_hash_password(password: str):
+    return "fakehashed" + password
 
 
-class AnimalName(str, Enum):
-    pig = "pig"
-    cow = "cow"
-
-@app.get("/animals/{animal_name}")
-def get_animal(animal_name:AnimalName):
-    if animal_name is AnimalName.pig:
-        message = "oink"
-    if animal_name is AnimalName.cow:
-        message = "moo"
-    return {"animal_name": animal_name, "message" : message}
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-@app.get("/skipandlimit/")
-async def read_skipandlimit(skip: int = 0, limit: int = 10):
-    time.sleep(1.0)
-    return {"skip": skip, "limit": limit}
+class User(BaseModel):
+    username: str
+    email: Union[str, None] = None
+    full_name: Union[str, None] = None
+    disabled: Union[bool, None] = None
 
-class Item(BaseModel):
-    name: str
-    description: Union[str, None] = None
-    price: float
-    tax: Union[float, None] = None
 
-l = []
+class UserInDB(User):
+    hashed_password: str
 
-@app.post("/items/")
-async def create_item(item: Item):
-    item_dict = item.dict()
-    if item.tax:
-        price_with_tax = item.price + item.tax
-        item_dict.update({"price_with_tax": price_with_tax})
-    l.append(item_dict)
-    return item
 
-@app.get("/all_items/")
-async def get_all_items():
-    return {"all_items":l}
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
+
+
+def fake_decode_token(token):
+    # This doesn't provide any security at all
+    # Check the next version
+    user = get_user(fake_users_db, token)
+    return user
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+async def get_current_active_user(
+    current_user: Annotated[User, Depends(get_current_user)]
+):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+
+@app.post("/token")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user_dict = fake_users_db.get(form_data.username)
+    if not user_dict:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    user = UserInDB(**user_dict)
+    hashed_password = fake_hash_password(form_data.password)
+    if not hashed_password == user.hashed_password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    return {"access_token": user.username, "token_type": "bearer"}
+
+
+@app.get("/users/me")
+async def read_users_me(
+    current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    return current_user
