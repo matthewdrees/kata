@@ -1,1 +1,3 @@
 fastapi[all]>=0.95,<0.96
+passlib[bcrypt]
+python-jose[cryptography]
