@@ -9,8 +9,10 @@ class Solution {
 public:
     std::vector<std::vector<int>> insert(std::vector<std::vector<int>>& intervals, std::vector<int>& newInterval)
     {
-        auto it_begin = std::lower_bound(intervals.begin(), intervals.end(), newInterval, [](const auto& interval, const auto& value) -> bool { return interval[1] < value[0]; });
-        auto it_end = std::upper_bound(it_begin, intervals.end(), newInterval, [](const auto& value, const auto& interval) -> bool { return value[1] < interval[0]; });
+        auto it_begin = std::lower_bound(intervals.begin(), intervals.end(), newInterval,
+            [](const auto& interval, const auto& value) -> bool { return interval[1] < value[0]; });
+        auto it_end = std::upper_bound(it_begin, intervals.end(), newInterval,
+            [](const auto& value, const auto& interval) -> bool { return value[1] < interval[0]; });
         if (it_begin == it_end) {
             intervals.insert(it_begin, newInterval);
             return intervals;
