@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <numeric>
 #include <vector>
 
 const int MAX_N = 9;
@@ -31,7 +32,8 @@ public:
         assert(n >= 1 && n <= MAX_N);
         assert(k >= 1 && k <= 362880);
         k -= 1;
-        std::string s { "123456789" };
+        std::string s(static_cast<size_t>(n), ' ');
+        std::iota(s.begin(), s.end(), '1');
         std::string ans;
         for (int i = n - 1; i > 0; --i) {
             const int div = factorial(i);
