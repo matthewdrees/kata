@@ -16,11 +16,16 @@ struct ContentView: View {
     @State private var errorMessage = ""
     @State private var showingError = false
 
+    @State private var score = 0
+
+    private let minWordLength = 3
+
     var body: some View {
         NavigationView {
             List {
                 Section {
                     TextField("Enter your word", text: $newWord).autocapitalization(.none)
+                        .keyboardType(.alphabet)
                 }
 
                 Section {
@@ -32,6 +37,9 @@ struct ContentView: View {
                         }
                     }
                 }
+                Section {
+                    Text("Score: \(score)")
+                }
             }
             .navigationTitle(rootWord)
             .onSubmit(addNewWord)
@@ -40,6 +48,9 @@ struct ContentView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(errorMessage)
+            }
+            .toolbar {
+                Button("New Word Please!", action: startGame)
             }
         }
     }
@@ -62,15 +73,25 @@ struct ContentView: View {
             wordError(title: "Word not recognized", message:    "You can't just make them up, you know!")
             return
         }
+
+        guard isLongEnough(word: answer) else {
+            wordError(title: "Word too short", message:    "The word must be at leat \(minWordLength) letters!")
+            return
+        }
         
         // Extra validation to come later on
         withAnimation {
             usedWords.insert(answer, at: 0)
+            score += answer.count
         }
         newWord = ""
+
+
     }
 
     func startGame() {
+        usedWords.removeAll()
+        score = 0
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
             if let startWords = try? String(contentsOf: startWordsURL) {
                 let allWords = startWords.components(separatedBy: "\n")
@@ -109,6 +130,10 @@ struct ContentView: View {
         errorTitle = title
         errorMessage = message
         showingError = true
+    }
+
+    func isLongEnough(word: String) -> Bool {
+        return word.count >= minWordLength
     }
 }
 
