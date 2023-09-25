@@ -9,7 +9,7 @@ std::string to_string(const std::vector<T>& v)
 {
     std::ostringstream oss;
     oss << '{';
-    for (const auto i : v) {
+    for (const auto& i : v) {
         oss << i << ',';
     }
     oss << "\b}"; // \b chomps the last comma.
