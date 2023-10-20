@@ -5,35 +5,33 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include <numeric>
+#include <span>
 #include <vector>
 
-std::string leftJustify(const std::vector<std::string>& words, size_t l, size_t r, size_t width)
+std::string leftJustify(std::span<std::string const> words, size_t width)
 {
     std::string line(width, ' ');
     auto it = line.begin();
-    for (size_t i = l; i < r; ++i) {
-        it = std::copy(words[i].begin(), words[i].end(), it);
+    for (const auto& word : words) {
+        it = std::copy(word.begin(), word.end(), it);
         ++it;
     }
     return line;
 }
 
-std::string leftRightJustify(const std::vector<std::string>& words, size_t l, size_t r, size_t width)
+std::string leftRightJustify(std::span<std::string const> words, size_t width, size_t lineLen)
 {
-    assert(r >= l);
-    const size_t numWords = r - l;
-    if (r - l < 2) {
-        return leftJustify(words, l, r, width);
+    if (words.size() < 2) {
+        return leftJustify(words, width);
     }
-    const size_t totalSpaces = width - std::accumulate(words.begin() + l, words.begin() + r, 0u, [](size_t s, const std::string& w) { return s + w.size(); });
-    const size_t minSpacesBetweenWords = totalSpaces / (numWords - 1);
-    size_t remainderSpacesBetweenWords = totalSpaces % (numWords - 1);
+    const size_t totalSpaces = width + words.size() - lineLen;
+    const size_t minSpacesBetweenWords = totalSpaces / (words.size() - 1);
+    size_t remainderSpacesBetweenWords = totalSpaces % (words.size() - 1);
 
     std::string line(width, ' ');
     auto it = line.begin();
-    for (size_t i = l; i < r; ++i) {
-        it = std::copy(words[i].begin(), words[i].end(), it);
+    for (const auto& word : words) {
+        it = std::copy(word.begin(), word.end(), it);
         it += minSpacesBetweenWords;
         if (remainderSpacesBetweenWords > 0) {
             ++it;
@@ -49,19 +47,19 @@ public:
     {
         const size_t width = maxWidth;
         std::vector<std::string> output;
-        size_t l = 0;
-        size_t lineLength = 0;
-        for (size_t r = 0; r < words.size(); ++r) {
-            const auto& word = words[r];
-            if (lineLength + word.size() > width) {
-                output.push_back(leftRightJustify(words, l, r, width));
+        auto l = words.begin();
+        size_t lineLen = 0;
+        for (auto r = l; r != words.end(); ++r) {
+            const auto& word = *r;
+            if (lineLen + word.size() > width) {
+                output.push_back(leftRightJustify(std::span(l, r), width, lineLen));
                 l = r;
-                lineLength = 0;
+                lineLen = 0;
             }
-            lineLength += word.size() + 1;
+            lineLen += word.size() + 1;
         }
-        if (l != words.size()) {
-            output.push_back(leftJustify(words, l, words.size(), width));
+        if (l != words.end()) {
+            output.push_back(leftJustify(std::span(l, words.end()), width));
         }
         return output;
     }
@@ -71,31 +69,28 @@ void test_leftJustify()
 {
     struct TestCase {
         std::vector<std::string> words;
-        size_t l;
-        size_t r;
         size_t width;
         std::string exp;
     };
 
     const TestCase test_cases[] = {
-        { { "a" }, 0, 1, 5, "a    " },
-        { { "a", "b" }, 0, 2, 5, "a b  " },
-        { { "a", "b" }, 1, 2, 5, "b    " },
-        { { "a", "b", "c" }, 0, 3, 5, "a b c" },
-        { { "a", "b", "c" }, 1, 3, 5, "b c  " },
+        { { "a" }, 1, "a" },
+        { { "a" }, 5, "a    " },
+        { { "a", "b" }, 3, "a b" },
+        { { "a", "b" }, 4, "a b " },
+        { { "a", "b", "c" }, 5, "a b c" },
+        { { "a", "b", "c" }, 6, "a b c " },
     };
 
     for (const auto& tc : test_cases) {
-        const auto act = leftJustify(tc.words, tc.l, tc.r, tc.width);
+        const auto act = leftJustify(std::span(tc.words), tc.width);
         if (tc.exp != act) {
             std::cerr << "fail. leftJustify(words: "
                       << leetcode::to_string(tc.words)
-                      << ", l: " << tc.l
-                      << ", r: " << tc.r
                       << ", width: " << tc.width
-                      << "), exp: " << tc.exp
-                      << ", act: " << act
-                      << "\n";
+                      << "), exp: '" << tc.exp
+                      << "', act: '" << act
+                      << "'\n";
         }
     }
 }
@@ -104,30 +99,32 @@ void test_leftRightJustify()
 {
     struct TestCase {
         std::vector<std::string> words;
-        size_t l;
-        size_t r;
         size_t width;
+        size_t lineLen;
         std::string exp;
     };
 
     const TestCase test_cases[] = {
-        { { "a" }, 0, 1, 5, "a    " },
-        { { "a", "b" }, 0, 2, 5, "a   b" },
-        { { "a", "b" }, 1, 2, 5, "b    " },
-        { { "a", "b", "c" }, 0, 3, 5, "a b c" },
-        { { "a", "b", "c" }, 0, 3, 6, "a  b c" },
-        { { "a", "b", "c" }, 0, 3, 7, "a  b  c" },
-        { { "This", "is", "an" }, 0, 3, 16, "This    is    an" },
+        { { "a" }, 1, 2, "a" },
+        { { "a" }, 2, 2, "a " },
+        { { "a" }, 5, 2, "a    " },
+        { { "a", "b" }, 3, 4, "a b" },
+        { { "a", "b" }, 4, 4, "a  b" },
+        { { "a", "b" }, 5, 4, "a   b" },
+        { { "a", "b", "c" }, 5, 6, "a b c" },
+        { { "a", "b", "c" }, 6, 6, "a  b c" },
+        { { "a", "b", "c" }, 7, 6, "a  b  c" },
+        { { "a", "b", "c" }, 8, 6, "a   b  c" },
+        { { "This", "is", "an" }, 16, 11, "This    is    an" },
     };
 
     for (const auto& tc : test_cases) {
-        const auto act = leftRightJustify(tc.words, tc.l, tc.r, tc.width);
+        const auto act = leftRightJustify(std::span(tc.words), tc.width, tc.lineLen);
         if (tc.exp != act) {
             std::cerr << "fail. leftJustify(words: "
                       << leetcode::to_string(tc.words)
-                      << ", l: " << tc.l
-                      << ", r: " << tc.r
                       << ", width: " << tc.width
+                      << ", lineLen: " << tc.lineLen
                       << "), exp: " << tc.exp
                       << ", act: " << act
                       << "\n";
