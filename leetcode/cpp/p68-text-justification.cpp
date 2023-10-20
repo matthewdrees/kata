@@ -13,8 +13,7 @@ std::string leftJustify(std::span<std::string const> words, size_t width)
     std::string line(width, ' ');
     auto it = line.begin();
     for (const auto& word : words) {
-        it = std::copy(word.begin(), word.end(), it);
-        ++it;
+        it = std::ranges::copy(word, it).out + 1;
     }
     return line;
 }
@@ -31,7 +30,7 @@ std::string leftRightJustify(std::span<std::string const> words, size_t width, s
     std::string line(width, ' ');
     auto it = line.begin();
     for (const auto& word : words) {
-        it = std::copy(word.begin(), word.end(), it);
+        it = std::ranges::copy(word, it).out;
         it += minSpacesBetweenWords;
         if (remainderSpacesBetweenWords > 0) {
             ++it;
