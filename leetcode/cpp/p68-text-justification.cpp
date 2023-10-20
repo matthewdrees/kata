@@ -8,37 +8,36 @@
 #include <numeric>
 #include <vector>
 
-std::string leftJustify(const std::vector<std::string>& words, size_t startIndex, size_t endIndex, int maxWidth)
+std::string leftJustify(const std::vector<std::string>& words, size_t l, size_t r, size_t width)
 {
-    std::string line(static_cast<size_t>(maxWidth), ' ');
+    std::string line(width, ' ');
     auto it = line.begin();
-    for (size_t i = startIndex; i < endIndex; ++i) {
+    for (size_t i = l; i < r; ++i) {
         it = std::copy(words[i].begin(), words[i].end(), it);
         ++it;
     }
     return line;
 }
 
-std::string leftRightJustify(const std::vector<std::string>& words, size_t startIndex, size_t endIndex, int maxWidth)
+std::string leftRightJustify(const std::vector<std::string>& words, size_t l, size_t r, size_t width)
 {
-    assert(maxWidth >= 0);
-    assert(endIndex >= startIndex);
-    const size_t numWords = endIndex - startIndex;
-    if (endIndex - startIndex < 2) {
-        return leftJustify(words, startIndex, endIndex, maxWidth);
+    assert(r >= l);
+    const size_t numWords = r - l;
+    if (r - l < 2) {
+        return leftJustify(words, l, r, width);
     }
-    const size_t totalSpaces = static_cast<size_t>(maxWidth) - std::accumulate(words.begin() + startIndex, words.begin() + endIndex, 0u, [](size_t s, const std::string& w) { return s + w.size(); });
+    const size_t totalSpaces = width - std::accumulate(words.begin() + l, words.begin() + r, 0u, [](size_t s, const std::string& w) { return s + w.size(); });
     const size_t minSpacesBetweenWords = totalSpaces / (numWords - 1);
     size_t remainderSpacesBetweenWords = totalSpaces % (numWords - 1);
 
-    std::string line(static_cast<size_t>(maxWidth), ' ');
+    std::string line(width, ' ');
     auto it = line.begin();
-    for (size_t i = startIndex; i < endIndex; ++i) {
+    for (size_t i = l; i < r; ++i) {
         it = std::copy(words[i].begin(), words[i].end(), it);
         it += minSpacesBetweenWords;
         if (remainderSpacesBetweenWords > 0) {
             ++it;
-            remainderSpacesBetweenWords -= 1;
+            --remainderSpacesBetweenWords;
         }
     }
     return line;
@@ -48,23 +47,21 @@ class Solution {
 public:
     std::vector<std::string> fullJustify(const std::vector<std::string>& words, int maxWidth)
     {
+        const size_t width = maxWidth;
         std::vector<std::string> output;
-        size_t startIndex = 0;
-        while (startIndex < words.size()) {
-            size_t lineLength = 0;
-            size_t endIndex = startIndex;
-            for (; endIndex < words.size(); ++endIndex) {
-                lineLength += 1 + words[endIndex].size();
-                if (lineLength > static_cast<size_t>(maxWidth + 1)) {
-                    output.push_back(leftRightJustify(words, startIndex, endIndex, maxWidth));
-                    break;
-                }
+        size_t l = 0;
+        size_t lineLength = 0;
+        for (size_t r = 0; r < words.size(); ++r) {
+            const auto& word = words[r];
+            if (lineLength + word.size() > width) {
+                output.push_back(leftRightJustify(words, l, r, width));
+                l = r;
+                lineLength = 0;
             }
-            if (endIndex == words.size()) {
-                output.push_back(leftJustify(words, startIndex, endIndex, maxWidth));
-                break;
-            }
-            startIndex = endIndex;
+            lineLength += word.size() + 1;
+        }
+        if (l != words.size()) {
+            output.push_back(leftJustify(words, l, words.size(), width));
         }
         return output;
     }
@@ -74,9 +71,9 @@ void test_leftJustify()
 {
     struct TestCase {
         std::vector<std::string> words;
-        size_t startIndex;
-        size_t endIndex;
-        int maxWidth;
+        size_t l;
+        size_t r;
+        size_t width;
         std::string exp;
     };
 
@@ -89,13 +86,13 @@ void test_leftJustify()
     };
 
     for (const auto& tc : test_cases) {
-        const auto act = leftJustify(tc.words, tc.startIndex, tc.endIndex, tc.maxWidth);
+        const auto act = leftJustify(tc.words, tc.l, tc.r, tc.width);
         if (tc.exp != act) {
             std::cerr << "fail. leftJustify(words: "
                       << leetcode::to_string(tc.words)
-                      << ", startIndex: " << tc.startIndex
-                      << ", endIndex: " << tc.endIndex
-                      << ", width: " << tc.maxWidth
+                      << ", l: " << tc.l
+                      << ", r: " << tc.r
+                      << ", width: " << tc.width
                       << "), exp: " << tc.exp
                       << ", act: " << act
                       << "\n";
@@ -107,9 +104,9 @@ void test_leftRightJustify()
 {
     struct TestCase {
         std::vector<std::string> words;
-        size_t startIndex;
-        size_t endIndex;
-        int maxWidth;
+        size_t l;
+        size_t r;
+        size_t width;
         std::string exp;
     };
 
@@ -124,13 +121,13 @@ void test_leftRightJustify()
     };
 
     for (const auto& tc : test_cases) {
-        const auto act = leftRightJustify(tc.words, tc.startIndex, tc.endIndex, tc.maxWidth);
+        const auto act = leftRightJustify(tc.words, tc.l, tc.r, tc.width);
         if (tc.exp != act) {
             std::cerr << "fail. leftJustify(words: "
                       << leetcode::to_string(tc.words)
-                      << ", startIndex: " << tc.startIndex
-                      << ", endIndex: " << tc.endIndex
-                      << ", width: " << tc.maxWidth
+                      << ", l: " << tc.l
+                      << ", r: " << tc.r
+                      << ", width: " << tc.width
                       << "), exp: " << tc.exp
                       << ", act: " << act
                       << "\n";
@@ -151,7 +148,7 @@ void test_fullJustify()
         { { "Imma", "be" }, 8, { "Imma be " } },
         { { "Imma", "be", "real" }, 7, { "Imma be", "real   " } },
         { { "Imma", "be", "real" }, 6, { "Imma  ", "be    ", "real  " } },
-        { { "Imma", "be", "real" }, 8, { "Imma be ", "real    " } },
+        { { "Imma", "be", "real" }, 8, { "Imma  be", "real    " } },
         { { "This", "is", "an", "example", "of", "text", "justification." }, 16, { "This    is    an", "example  of text", "justification.  " } },
         { { "What", "must", "be", "acknowledgment", "shall", "be" }, 16, { "What   must   be", "acknowledgment  ", "shall be        " } },
         { { "Science", "is", "what", "we", "understand", "well", "enough", "to", "explain", "to", "a", "computer.", "Art", "is", "everything", "else", "we", "do" }, 20, { "Science  is  what we", "understand      well", "enough to explain to", "a  computer.  Art is", "everything  else  we", "do                  " } },
