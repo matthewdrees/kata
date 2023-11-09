@@ -8,6 +8,16 @@
 
 using Matrix = std::vector<std::vector<int>>;
 
+static bool is_first_col_zero(const Matrix& matrix)
+{
+    for (size_t y = 0; y < matrix.size(); ++y) {
+        if (matrix[y][0] == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static void set_col_zero(Matrix& matrix, size_t Y, size_t col)
 {
     for (size_t y = 0; y < Y; ++y) {
@@ -24,14 +34,7 @@ public:
         const auto X = matrix[0].size();
         assert(X > 0);
 
-        bool first_col_is_zero = false;
-        for (size_t y = 0; y < Y; ++y) {
-            if (matrix[y][0] == 0) {
-                first_col_is_zero = true;
-                break;
-            }
-        }
-
+        const bool first_col_is_zero = is_first_col_zero(matrix);
         for (auto& row : matrix) {
             if (std::ranges::any_of(row, [](int n) { return n == 0; })) {
                 row[0] = 0;
