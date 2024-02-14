@@ -6,7 +6,7 @@ pub struct Solution {}
 
 impl Solution {
     pub fn rearrange_array(nums: Vec<i32>) -> Vec<i32> {
-        let mut ans = nums.clone();
+        let mut ans = vec![0; nums.len()];
         let mut pi: usize = 0;
         let mut ni: usize = 1;
         for n in nums {
