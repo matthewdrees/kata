@@ -3,18 +3,18 @@ from typing import List
 
 
 class Solution:
-    def recurse(self, num: int, nums: List[int]):
+    def backtrack(self, num: int, nums: List[int]):
         total = sum(nums)
-        if total > self.n:
-            return
         count = len(nums) + 1
         if count == self.k:
             last_num = self.n - total
             if last_num >= num and last_num < 10:
                 self.output.append(nums + [last_num])
             return
-        for new_num in range(num, 10):
-            self.recurse(new_num + 1, nums + [new_num])
+        if total >= self.n:
+            return
+        for new_num in range(num, 9):
+            self.backtrack(new_num + 1, nums + [new_num])
 
     def combinationSum3(self, k: int, n: int) -> List[List[int]]:
         assert k >= 2 and k <= 9
@@ -22,7 +22,7 @@ class Solution:
         self.k = k
         self.n = n
         self.output = []
-        self.recurse(1, [])
+        self.backtrack(1, [])
         return self.output
 
 
