@@ -12,11 +12,10 @@ class Solution:
         i2 = len(nums2) - 1
         for x in range(len(nums1) - 1, -1, -1):
             if i1 < 0:
-                nums1[x] = nums2[i2]
-                i2 -= 1
+                nums1[: x + 1] = nums2[: i2 + 1]
+                return
             elif i2 < 0:
-                nums1[x] = nums1[i1]
-                i1 -= 1
+                return
             elif nums1[i1] < nums2[i2]:
                 nums1[x] = nums2[i2]
                 i2 -= 1
@@ -27,6 +26,7 @@ class Solution:
 
 test_cases = (
     ([1, 2, 3, 0, 0, 0], 3, [2, 5, 6], [1, 2, 2, 3, 5, 6]),
+    ([4, 5, 6, 0, 0, 0], 3, [1, 2, 3], [1, 2, 3, 4, 5, 6]),
     ([], 0, [], []),
     ([1], 1, [], [1]),
     ([0], 1, [1], [1]),
