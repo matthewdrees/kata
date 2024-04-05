@@ -5,15 +5,35 @@
 
 class Solution {
 public:
+    // Approach 2.
     bool isIsomorphic(std::string s, std::string t)
+    {
+        char m1[128] = { 0 };
+        char m2[128] = { 0 };
+        for (size_t i = 0; i < s.size(); i++) {
+            char& m1val = m1[static_cast<size_t>(s[i])];
+            char& m2val = m2[static_cast<size_t>(t[i])];
+            if (m1val == 0 && m2val == 0) {
+                m1val = t[i];
+                m2val = 1;
+            }
+        }
+        for (size_t i = 0; i < s.size(); i++) {
+            s[i] = m1[static_cast<size_t>(s[i])];
+        }
+        return (s == t);
+    }
+
+    // Approach 1, take 2
+    bool isIsomorphic3(std::string s, std::string t)
     {
         char m1[128] = { 0 };
         char m2[128] = { 0 };
         for (size_t i = 0; i < s.size(); ++i) {
             const auto c1 = s[i];
             const auto c2 = t[i];
-            assert(c1 >= 0 && c1 < 128);
-            assert(c2 >= 0 && c2 < 128);
+            // assert(c1 >= 0 && c1 < 128);
+            // assert(c2 >= 0 && c2 < 128);
             char& c1val = m1[static_cast<size_t>(c1)];
             if (c1val != 0 && c1val != c2) {
                 return false;
@@ -28,7 +48,7 @@ public:
         return true;
     }
 
-    // First cut.
+    // Approach 1, first cut.
     bool isIsomorphic2(std::string s, std::string t)
     {
         if (s.size() != t.size()) {
@@ -68,6 +88,7 @@ int main()
         { "foo", "bar", false },
         { "paper", "title", true },
         { "baba", "bada", false },
+        { "badc", "baba", false },
     };
     Solution solution;
     for (const auto& tc : test_cases) {
