@@ -38,28 +38,21 @@ class Solution:
         return longest_sequence
 
     def longestConsecutive_remove_from_set(self, nums: List[int]) -> int:
-        longest_sequence = 1
+        longest_sequence = 0
         s = set(nums)
         while s:
             n = s.pop()
             lo = n - 1
-            try:
-                while True:
-                    s.remove(lo)
-                    lo -= 1
-            except KeyError:
-                pass
+            while lo in s:
+                s.discard(lo)
+                lo -= 1
             hi = n + 1
-            try:
-                while True:
-                    s.remove(hi)
-                    hi += 1
-            except KeyError:
-                pass
+            while hi in s:
+                s.discard(hi)
+                hi += 1
             cur_sequence = hi - lo - 1
             if cur_sequence > longest_sequence:
                 longest_sequence = cur_sequence
-
         return longest_sequence
 
 
@@ -72,7 +65,7 @@ def test_longest_consecutive():
 
     solution = Solution()
     for nums, exp in test_cases:
-        act = solution.longestConsecutive(nums)
+        act = solution.longestConsecutive_remove_from_set(nums)
         if exp != act:
             print(f"fail. nums: {nums}, exp: {exp}, act: {act}")
 
