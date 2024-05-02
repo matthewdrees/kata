@@ -23,7 +23,7 @@ std::string to_string(const std::vector<std::vector<T>>& v)
     oss << '{';
     for (const auto& row : v) {
         oss << '{';
-        for (const auto x : row) {
+        for (const auto& x : row) {
             oss << x << ',';
         }
         oss << "\b},"; // \b chomps the last comma.
