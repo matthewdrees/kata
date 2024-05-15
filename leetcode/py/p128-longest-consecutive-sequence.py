@@ -5,6 +5,7 @@ from typing import List
 import pyperf
 import random
 
+
 class Solution:
     def longestConsecutive(self, nums: List[int]) -> int:
         if len(nums) == 0:
@@ -80,18 +81,29 @@ def get_perftest_nums(num_elements):
 
 def perf_longest_consecutive_helper(runner, func_name, func):
     for x in (0, 1, 2, 4, 8, 16):
-        num_elements = 2 ** x
+        num_elements = 2**x
         nums = get_perftest_nums(num_elements)
         runner.bench_func(f"{func_name}(n={num_elements})", func, nums)
+
 
 def perf_longest_consecutive():
     runner = pyperf.Runner()
     runner.parse_args()
     solution = Solution()
-    perf_longest_consecutive_helper(runner, "longestConsecutive", solution.longestConsecutive)
-    perf_longest_consecutive_helper(runner, "longestConsecutive_iterate_over_set", solution.longestConsecutive_iterate_over_set)
-    perf_longest_consecutive_helper(runner, "longestConsecutive_remove_from_set", solution.longestConsecutive_remove_from_set)
+    perf_longest_consecutive_helper(
+        runner, "longestConsecutive", solution.longestConsecutive
+    )
+    perf_longest_consecutive_helper(
+        runner,
+        "longestConsecutive_iterate_over_set",
+        solution.longestConsecutive_iterate_over_set,
+    )
+    perf_longest_consecutive_helper(
+        runner,
+        "longestConsecutive_remove_from_set",
+        solution.longestConsecutive_remove_from_set,
+    )
+
 
 test_longest_consecutive()
-
 perf_longest_consecutive()
