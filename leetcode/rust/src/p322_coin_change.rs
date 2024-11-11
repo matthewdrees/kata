@@ -39,31 +39,14 @@ mod tests {
 
     #[test]
     fn test_coin_change() {
-        struct TC {
-            coins: Vec<i32>,
-            amount: i32,
-            exp: i32,
-        }
-
-        let test_cases = vec![
-            TC { coins: vec![1, 5, 10, 25], amount: 25, exp: 1 },
-            TC { coins: vec![1, 5, 10, 25], amount: 10, exp: 1 },
-            TC { coins: vec![1, 2, 5], amount: 11, exp: 3 },
-            TC { coins: vec![2], amount: 3, exp: -1 },
-            TC { coins: vec![1], amount: 0, exp: 0 },
-        ];
-
-        let mut passed = true;
-        for tc in test_cases.iter() {
-            let act = Solution::coin_change(tc.coins.clone(), tc.amount);
-            if tc.exp != act {
-                passed = false;
-                eprintln!(
-                    "(coins: {:?}, amount: {}, exp: {}, act: {}",
-                    tc.coins, tc.amount, tc.exp, act
-                );
-            }
-        }
-        assert!(passed);
+        assert_eq!(1, Solution::coin_change(vec![1, 5, 10, 25], 25));
+        assert_eq!(1, Solution::coin_change(vec![1, 5, 10, 25], 10));
+        assert_eq!(3, Solution::coin_change(vec![1, 2, 5], 11));
+        assert_eq!(-1, Solution::coin_change(vec![2], 3));
+        assert_eq!(0, Solution::coin_change(vec![1], 0));
+        assert_eq!(
+            834,
+            Solution::coin_change(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], 10_000)
+        );
     }
 }
