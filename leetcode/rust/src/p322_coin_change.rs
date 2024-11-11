@@ -1,29 +1,35 @@
 // LeetCode 322. Coin Change.
 
+// use std::cmp::min;
+// use std::iter;
 pub struct Solution {}
 
 impl Solution {
     pub fn coin_change(coins: Vec<i32>, amount: i32) -> i32 {
-        assert!(0 <= amount && amount <= 1_000);
-        let mut vals: Vec<i32> = vec![-1; (amount + 1) as usize];
-        vals[0] = 0;
+        // reserve max value for sentinal for small optimization.
+        assert!(amount < i32::MAX - 1);
+        if amount <= 0 {
+            return 0;
+        }
+        let sentinal = amount + 1;
+        let mut coin_counts: Vec<i32> = vec![sentinal; (amount + 1) as usize];
+        coin_counts[0] = 0;
         for i in 1..=amount {
+            let mut best_val = sentinal;
             for coin in coins.iter() {
                 let prev_i = i - *coin;
-                if prev_i < 0 {
-                    continue;
-                }
-                let new_val = vals[prev_i as usize] + 1;
-                if new_val == 0 {
-                    continue;
-                }
-                let cur_val = vals[i as usize];
-                if cur_val == -1 || new_val < cur_val {
-                    vals[i as usize] = new_val;
+                if prev_i >= 0 {
+                    let new_val = coin_counts[prev_i as usize] + 1;
+                    best_val = std::cmp::min(new_val, best_val);
                 }
             }
+            coin_counts[i as usize] = std::cmp::min(best_val, coin_counts[i as usize]);
         }
-        return *vals.last().unwrap();
+        let last_val = *coin_counts.last().unwrap();
+        if last_val >= sentinal {
+            return -1;
+        }
+        return last_val;
     }
 }
 
