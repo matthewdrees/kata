@@ -3,4 +3,5 @@ pub mod p198_house_robber;
 pub mod p300_longest_increasing_subsequence;
 pub mod p322_coin_change;
 pub mod p75_sort_colors;
+pub mod p79_word_search;
 pub mod p89_gray_code;
