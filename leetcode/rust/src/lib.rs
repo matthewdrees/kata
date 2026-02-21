@@ -1,4 +1,5 @@
 pub mod p118_pascals_triangle;
+pub mod p122_best_time_to_buy_and_sell_stock_ii;
 pub mod p139_word_break;
 pub mod p198_house_robber;
 pub mod p300_longest_increasing_subsequence;
