@@ -6,6 +6,7 @@ pub mod p198_house_robber;
 pub mod p231_power_of_two;
 pub mod p300_longest_increasing_subsequence;
 pub mod p322_coin_change;
+pub mod p387_first_unique_character_in_a_string;
 pub mod p75_sort_colors;
 pub mod p79_word_search;
 pub mod p89_gray_code;
